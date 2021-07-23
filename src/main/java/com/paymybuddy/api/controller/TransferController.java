@@ -1,25 +1,69 @@
 package com.paymybuddy.api.controller;
 
+import com.paymybuddy.api.exception.TransferException;
 import com.paymybuddy.api.model.Transfer;
+import com.paymybuddy.api.model.User;
+import com.paymybuddy.api.model.dto.BankAccountDto;
+import com.paymybuddy.api.service.BankAccountService;
 import com.paymybuddy.api.service.TransferService;
+import com.paymybuddy.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
+import javax.validation.Valid;
 import java.util.List;
 
-@RestController
+@Controller
 public class TransferController {
 
     @Autowired
     TransferService transferService;
+    @Autowired
+    UserService userService;
+    @Autowired
+    BankAccountService bankAccountService;
 
     @GetMapping("/transfer")
-    public List<Transfer> getTransfersByIdUser() {
-        return transferService.getTransfers();
+    public String transfer(Model model) {
+        List<Transfer> transferList = transferService.getTransfers();
+        User user = userService.getUser();
+        model.addAttribute("transfer", transferList);
+        model.addAttribute("user", user);
+        return "transfer";
     }
 
-    @PostMapping("/transfer")
-    public Transfer createTransfer(@RequestBody Transfer transfer) {
-        return transferService.createTransfer(transfer);
+    @PostMapping("/createTransfer")
+    public String createTransfer(@Valid @ModelAttribute Transfer transfer, BindingResult result, Model model) {
+
+        if (!result.hasErrors()) {
+            try {
+                transferService.createTransfer(transfer);
+                return "redirect:/transfer";
+            } catch (TransferException e) {
+                ObjectError objectError = new ObjectError("objectError", e.getMessage());
+                result.addError(objectError);
+                List<BankAccountDto> bankAccountList = bankAccountService.getAllByIdUser();
+                model.addAttribute("bankAccount", bankAccountList);
+                return "formNewTransfer";
+            }
+        }
+        List<BankAccountDto> bankAccountList = bankAccountService.getAllByIdUser();
+        model.addAttribute("bankAccount", bankAccountList);
+        return "formNewTransfer";
+    }
+
+    @GetMapping("/createTransfer")
+    public String createTransfer(Model model) {
+        Transfer t = new Transfer();
+        model.addAttribute("transfer", t);
+        List<BankAccountDto> bankAccountList = bankAccountService.getAllByIdUser();
+        model.addAttribute("bankAccount", bankAccountList);
+        return "formNewTransfer.html";
     }
 }

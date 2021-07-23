@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhml"
+      xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+          integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css"
+          integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+            integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+
+    <title>Pay my buddy web application</title>
+
+</head>
+
+<body>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <img alt="Brand" src="css/logo.JPG">
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/home">Home</a></li>
+                <li><a href="/transfer">Transfer</a></li>
+                <li><a href="/transaction">Transaction</a></li>
+                <li><a href="/profile">Profile</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="/">Log off</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<ol class="breadcrumb ">
+    <li><a href="/home">Home</a></li>
+    <li class="active">Transaction</li>
+</ol>
+
+<div class="container">
+    <div class="row align-items-end">
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+            <h2 class="h2">Send money</h2>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+            <a href="/connection" >
+            <button type="submit" class="btn btn-primary pull-right">Add Connection</button>
+            </a>
+        </div>
+    </div>
+
+    <div class="pay">
+        <form method="post"
+              th:action="@{/createTransaction}" th:object="${transactionDto}">
+
+<!--            <div class="alert alert-danger" th:if="${#fields.hasErrors('global')}" >-->
+<!--                <p th:errors="*{global}"></p>-->
+<!--            </div>-->
+
+            <div class="row">
+
+                <div class="col-md-3">
+                    <select class="form-control" name="emailBeneficiary" >
+<!--                        th:field="*{emailBeneficiary}"-->
+                        <option value="">Select connection</option>
+                        <option th:each="connection : ${connection}"
+                                th:value="${connection.emailOfUserLinked}"
+                                th:text="${connection.name}+' : '+${connection.emailOfUserLinked}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input
+                            type="text" name="description" class="form-control" id="description"
+                            aria-describedby="descriptionHelp" placeholder="Enter the description">
+<!--                    th:field="*{description}"-->
+                </div>
+
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <span class="input-group-addon">€</span>
+                        <input type="text" name="amount" class="form-control" aria-label="Amount (to the nearest euro)">
+                        <span class="input-group-addon">.00</span>
+<!--                        th:field="*{amount}"-->
+                    </div>
+<!--                    <p th:if="${#fields.hasErrors('amount')}" class="label label-danger" th:errors="*{amount}"></p>-->
+                </div>
+
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-success btn-block">Pay</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="container special">
+    <h2 class="h2">My transactions</h2>
+    <div class="table-responsive">
+        <table class="table table-striped table-sm table table-bordered">
+            <thead class="green">
+            <tr>
+                <th> Connections</th>
+                <th> Description</th>
+                <th> Amount</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${transaction.empty}">
+                <td colspan="3">No transaction yet</td>
+            </tr>
+            <tr th:each="transaction: ${transaction}">
+                <td><span th:text="${transaction.connectionName}"> Connections </span></td>
+                <td><span th:text="${transaction.description}"> Description </span></td>
+                <td>
+                    <span th:if="${transaction.idTransmitter} == ${user.userId}"
+                    th:text="'-' + ${transaction.amount}"> Amount </span>
+                    <span th:if="${transaction.idBeneficiary} == ${user.userId}"
+                    th:text="'+' +${transaction.amount}"> Amount </span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="container">
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li>
+                <a href="#" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li><a href="#">1</a></li>
+            <li><a href="#">2</a></li>
+            <li><a href="#">3</a></li>
+            <li><a href="#">4</a></li>
+            <li><a href="#">5</a></li>
+            <li>
+                <a href="#" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+</body>
+</html>
+</html>

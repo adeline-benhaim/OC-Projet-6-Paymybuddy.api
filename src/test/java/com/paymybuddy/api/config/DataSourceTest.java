@@ -1,9 +1,6 @@
 package com.paymybuddy.api.config;
 
-import com.paymybuddy.api.model.BankAccount;
-import com.paymybuddy.api.model.Connection;
-import com.paymybuddy.api.model.Transfer;
-import com.paymybuddy.api.model.User;
+import com.paymybuddy.api.model.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -76,9 +73,9 @@ public class DataSourceTest {
     }
 
     public void createBankAccountListMocked() {
-        BankAccount bankAccount1 = BankAccount.builder().accountId(1).idUser(1).bic(11111).iban(11111).name("bank1").build();
-        BankAccount bankAccount2 = BankAccount.builder().accountId(2).idUser(1).bic(22222).iban(22222).name("bank2").build();
-        BankAccount bankAccount3 = BankAccount.builder().accountId(3).idUser(2).bic(33333).iban(33333).name("bank1").build();
+        BankAccount bankAccount1 = BankAccount.builder().accountId(1).idUser(1).bic("11111").iban("11111").name("bank1").build();
+        BankAccount bankAccount2 = BankAccount.builder().accountId(2).idUser(1).bic("22222").iban("22222").name("bank2").build();
+        BankAccount bankAccount3 = BankAccount.builder().accountId(3).idUser(2).bic("33333").iban("33333").name("bank1").build();
         bankAccountListMocked.addAll(Arrays.asList(bankAccount1, bankAccount2, bankAccount3));
     }
 

@@ -1,9 +1,12 @@
 package com.paymybuddy.api.service;
 
 import com.paymybuddy.api.exception.TransactionException;
+import com.paymybuddy.api.model.Commission;
 import com.paymybuddy.api.model.Connection;
 import com.paymybuddy.api.model.Transaction;
 import com.paymybuddy.api.model.User;
+import com.paymybuddy.api.model.dto.TransactionDto;
+import com.paymybuddy.api.repository.CommissionRepository;
 import com.paymybuddy.api.repository.ConnectionRepository;
 import com.paymybuddy.api.repository.TransactionRepository;
 import com.paymybuddy.api.repository.UserRepository;
@@ -25,6 +28,8 @@ public class TransactionServiceImpl implements TransactionService {
     UserRepository userRepository;
     @Autowired
     ConnectionRepository connectionRepository;
+    @Autowired
+    CommissionRepository commissionRepository;
 
     int idCurrentUser = User.getCurrentUser();
 
@@ -40,43 +45,50 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     /**
-     * Create a new transfer between the current user and a user connected
+     * Create a new transaction between the current user and a user connected
      *
-     * @param transaction to create
+     * @param transactionDto transaction to create
      * @return transaction created
      */
     @Override
     @Transactional
-    public Transaction createTransaction(Transaction transaction) {
+    public Transaction createTransaction(TransactionDto transactionDto) {
         logger.info("Create a new transaction");
         User currentUser = userRepository.findByUserId(idCurrentUser);
-        User userBeneficiary = userRepository.findByUserId(transaction.getIdBeneficiary());
-        if(userBeneficiary == null) {
+        User userBeneficiary = userRepository.findUserIdByEmail(transactionDto.getEmailBeneficiary());
+        if (userBeneficiary == null) {
             logger.error("Unable to create transaction because user beneficiary doesn't exist in database");
             throw new TransactionException("Unable to create transaction because user beneficiary doesn't exist in database");
         }
-        int balanceCurrentUser = currentUser.getBalance();
-        int balanceCurrentUserUpdated = balanceCurrentUser - transaction.getAmount();
+        double commission = transactionDto.getAmount() * 0.05;
+        double balanceCurrentUser = currentUser.getBalance();
+        double balanceCurrentUserUpdated = balanceCurrentUser - (transactionDto.getAmount() + commission);
         if (balanceCurrentUserUpdated < 0) {
             logger.error("Unable to make the transaction because the balance is insufficient");
             throw new TransactionException("Balance not sufficient to make the transaction, maximum amount authorized : " + balanceCurrentUser);
         }
-        Connection connection = connectionRepository.findByIdUserAndEmailOfUserLinked(idCurrentUser, userBeneficiary.getEmail());
+        Connection connection = connectionRepository.findByIdUserAndEmailOfUserLinked(idCurrentUser, transactionDto.getEmailBeneficiary());
         long currentDate = System.currentTimeMillis();
         Transaction newTransaction = Transaction.builder()
                 .idConnection(connection.getConnectionId())
                 .idTransmitter(idCurrentUser)
-                .idBeneficiary(transaction.getIdBeneficiary())
+                .idBeneficiary(userBeneficiary.getUserId())
                 .connectionName(connection.getName())
-                .description(transaction.getDescription())
-                .amount(transaction.getAmount())
+                .description(transactionDto.getDescription())
+                .amount(transactionDto.getAmount())
                 .date(new java.sql.Timestamp(currentDate))
                 .success(true)
                 .build();
-        int balanceUserBeneficiary = userBeneficiary.getBalance();
-        int balanceUserBeneficiaryUpdated = balanceUserBeneficiary + transaction.getAmount();
+        double balanceUserBeneficiary = userBeneficiary.getBalance();
+        double balanceUserBeneficiaryUpdated = balanceUserBeneficiary + transactionDto.getAmount();
         currentUser.setBalance(balanceCurrentUserUpdated);
         userBeneficiary.setBalance(balanceUserBeneficiaryUpdated);
+        Commission newCommission = Commission.builder()
+                .idTransaction(newTransaction.getTransactionId())
+                .amount(commission)
+                .date(newTransaction.getDate())
+                .build();
+        commissionRepository.save(newCommission);
         logger.info("New transaction created");
         return transactionRepository.save(newTransaction);
     }

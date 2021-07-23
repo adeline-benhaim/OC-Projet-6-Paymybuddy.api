@@ -1,6 +1,7 @@
 package com.paymybuddy.api.repository;
 
 import com.paymybuddy.api.model.BankAccount;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,6 +16,7 @@ public interface BankAccountRepository extends CrudRepository<BankAccount, Integ
      * @param idUser id of the user whose bank accounts are sought
      * @return list of bank account belonging to user found by id
      */
+    @Query("FROM BankAccount t WHERE t.idUser = ?1 ORDER BY t.accountId DESC")
     List<BankAccount> findByIdUser(int idUser);
 
     /**
@@ -25,5 +27,12 @@ public interface BankAccountRepository extends CrudRepository<BankAccount, Integ
      * @return true if bank account exist
      */
     boolean existsByIdUserAndName(int idUser, String name);
+
+    /**
+     * Find a bank account by id account
+     * @param accountId id of the account sought
+     * @return the bank account found
+     */
+    BankAccount findByAccountId(int accountId);
 
 }

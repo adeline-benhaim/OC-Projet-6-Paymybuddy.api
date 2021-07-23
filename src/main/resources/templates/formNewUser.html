@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+          integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css"
+          integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+            integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+
+    <title>Pay my buddy web application</title>
+
+</head>
+
+<body>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <img alt="Brand" src="css/logo.JPG">
+        </div>
+    </div>
+</nav>
+
+<ol class="breadcrumb ">
+    <li><a href="">Home</a></li>
+    <li class="active">CreateAccount</li>
+</ol>
+
+<div class="container special">
+
+    <br>
+    <div>
+        <a href="/">
+            <button class="btn btn-secondary btn-sm pull-left" type="submit">
+                < Back
+            </button>
+        </a>
+    </div>
+    <br><br>
+
+    <h2 class="h2">Create account</h2>
+    <div>
+        <form method="post"
+              th:action="@{/createUser}" th:object="${user}">
+
+            <div class="alert alert-danger" th:if="${#fields.hasErrors('global')}" >
+               <p th:errors="*{global}"></p>
+            </div>
+
+            <div class="row">
+            <div class="form-group col-xs-6">
+                <label for="emailUserInput">Email</label>
+                <input
+                        type="text" th:field="*{email}" class="form-control" id="emailUserInput"
+                        aria-describedby="emailUserHelp" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group col-xs-6">
+                <label for="passwordUserInput">Password</label>
+                <input
+                        type="text" th:field="*{password}" class="form-control" id="passwordUserInput"
+                        aria-describedby="passwordUserHelp" placeholder="Enter your password" required>
+                <p th:if="${#fields.hasErrors('password')}" class="label label-danger" th:errors="*{password}"></p>
+            </div>
+            <div class="form-group col-xs-6">
+                <label for="firstNameUserInput">First name</label>
+                <input
+                        type="text" th:field="*{firstName}" class="form-control" id="firstNameUserInput"
+                        aria-describedby="firstNameUserHelp" placeholder="Enter your first name" required>
+            </div>
+            <div class="form-group col-xs-6">
+                <label for="lastNameUserInput">Last name</label>
+                <input
+                        type="text" th:field="*{lastName}" class="form-control" id="lastNameUserInput"
+                        aria-describedby="lastNameUserHelp" placeholder="Enter your last name" required>
+            </div>
+            <div class="form-group col-xs-6">
+                <label for="addressUserInput">Address</label>
+                <input
+                        type="text" th:field="*{address}" class="form-control" id="addressUserInput"
+                        aria-describedby="addressUserHelp" placeholder="Enter your address">
+            </div>
+            <div class="form-group col-xs-6">
+                <label for="zipUserInput">Zip</label>
+                <input
+                        type="text" th:field="*{zip}" class="form-control" id="zipUserInput"
+                        aria-describedby="zipUserHelp" placeholder="Enter your zip">
+                <p th:if="${#fields.hasErrors('zip')}" class="label label-danger" th:errors="*{zip}"></p>
+
+            </div>
+            <div class="form-group col-xs-6">
+                <label for="cityUserInput">City</label>
+                <input
+                        type="text" th:field="*{city}" class="form-control" id="cityUserInput"
+                        aria-describedby="cityUserHelp" placeholder="Enter your city">
+            </div>
+            <div class="form-group col-xs-6">
+                <label for="phoneUserInput">Phone</label>
+                <input
+                        type="text" th:field="*{phone}" class="form-control" id="phoneUserInput"
+                        aria-describedby="phoneUserHelp" placeholder="Enter your phone" required>
+            </div>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+</div>
+
+<script
+        src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script
+        src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+</body>
+</html>

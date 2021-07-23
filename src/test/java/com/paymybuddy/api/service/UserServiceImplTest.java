@@ -46,7 +46,7 @@ class UserServiceImplTest {
         userService.getUser();
 
         //THEN
-        Mockito.verify(userRepository, Mockito.times(1)).findById(idCurrentUser);
+        Mockito.verify(userRepository, Mockito.times(1)).findByUserId(idCurrentUser);
 
     }
 

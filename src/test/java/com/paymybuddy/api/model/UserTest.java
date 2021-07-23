@@ -19,7 +19,7 @@ class UserTest {
         String password = "password";
         String firstName = "firstName";
         String lastName = "lastName";
-        int balance = 100;
+        double balance = 100;
         String address = "address";
         int zip = 10000;
         String city = "city";
@@ -37,7 +37,7 @@ class UserTest {
                 .password("password")
                 .firstName("firstName")
                 .lastName("lastName")
-                .balance(100)
+                .balance(100.0)
                 .address("address")
                 .zip(10000)
                 .city("city")

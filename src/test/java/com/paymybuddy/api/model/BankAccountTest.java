@@ -17,8 +17,8 @@ class BankAccountTest {
         int accountId = 1;
         int idUser = 1;
         String name = "name";
-        int bic = 1;
-        int iban = 1;
+        String bic = "1";
+        String iban = "1";
         List<Transfer> transferList = null;
 
         //WHEN
@@ -26,8 +26,8 @@ class BankAccountTest {
                 .accountId(1)
                 .idUser(1)
                 .name("name")
-                .bic(1)
-                .iban(1)
+                .bic("1")
+                .iban("1")
                 .transferList(null)
                 .build();
 

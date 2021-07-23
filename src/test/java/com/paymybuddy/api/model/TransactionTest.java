@@ -21,7 +21,7 @@ class TransactionTest {
         int idBeneficiary = 1;
         String connectionName = "name";
         String description = "description";
-        int amount = 100;
+        double amount = 100;
         Timestamp date = null;
         boolean success = true;
 
@@ -33,7 +33,7 @@ class TransactionTest {
                 .idBeneficiary(1)
                 .connectionName("name")
                 .description("description")
-                .amount(100)
+                .amount(100.0)
                 .date(null)
                 .success(true)
                 .build();

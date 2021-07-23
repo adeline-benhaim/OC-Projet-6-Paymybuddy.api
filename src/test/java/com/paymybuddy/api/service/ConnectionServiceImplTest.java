@@ -5,7 +5,6 @@ import com.paymybuddy.api.exception.ConnectionAlreadyExistException;
 import com.paymybuddy.api.exception.ConnectionNotFoundException;
 import com.paymybuddy.api.exception.UserNotFoundException;
 import com.paymybuddy.api.model.Connection;
-import com.paymybuddy.api.model.dto.ConnectionDto;
 import com.paymybuddy.api.repository.ConnectionRepository;
 import com.paymybuddy.api.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -121,7 +120,7 @@ public class ConnectionServiceImplTest {
         when(connectionRepository.findByIdUser(idCurrentUser)).thenReturn(connectionList);
 
         //WHEN
-        List<ConnectionDto> connection = connectionService.getConnections();
+        List<Connection> connection = connectionService.getConnections();
 
         //THEN
         assertEquals(connection.get(0).getEmailOfUserLinked(), dataSourceTest.getConnectionListMocked().get(0).getEmailOfUserLinked());

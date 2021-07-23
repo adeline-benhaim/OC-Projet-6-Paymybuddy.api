@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -11,13 +11,15 @@
     <link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" crossorigin="anonymous"/>
 </head>
 <body>
+<div class="container form-signin text-center">
+    <img alt="Brand" src="css/logo.JPG">
+</div>
 <div class="container">
     <form class="form-signin" method="post" action="/login">
-        <img src="img/Capture.PNG"/>
-        <h2 class="form-signin-heading">Please sign in</h2>
+
         <p>
-            <label for="username" class="sr-only">Username</label>
-            <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+            <label for="username" class="sr-only">Email</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="Email" required autofocus>
         </p>
         <p>
             <label for="password" class="sr-only">Password</label>
@@ -26,5 +28,8 @@
         <input name="_csrf" type="hidden" value="b29fedd4-2fde-4a9e-a1ce-00f73f474d88" />
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
     </form>
+</div>
+<div class="container form-signin text-right">
+    <p><a th:href="@{/createUser}">Create account</a></p>
 </div>
 </body></html>

@@ -47,8 +47,8 @@ public class TransferServiceImpl implements TransferService {
     public Transfer createTransfer(Transfer transfer) {
         logger.info("Create a new transfer");
         User currentUser = userRepository.findByUserId(idCurrentUser);
-        int balanceCurrentUser = currentUser.getBalance();
-        int balanceCurrentUserUpdated = 0;
+        double balanceCurrentUser = currentUser.getBalance();
+        double balanceCurrentUserUpdated = 0;
         switch (transfer.getTransferType()) {
             case DEBIT:
                 balanceCurrentUserUpdated = (balanceCurrentUser - transfer.getAmount());

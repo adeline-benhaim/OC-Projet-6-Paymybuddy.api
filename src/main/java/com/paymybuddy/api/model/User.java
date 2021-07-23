@@ -2,8 +2,10 @@ package com.paymybuddy.api.model;
 
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
 import java.util.List;
 
 @Entity
@@ -23,6 +25,7 @@ public class User {
 
     private String email;
 
+    @Length(min = 8, message = "Password size must be have 8 characters minimum")
     private String password;
 
     @Column(name = "first_name")
@@ -31,10 +34,11 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
-    private int balance;
+    private double balance;
 
     private String address;
 
+    @Max(value = 99999, message = "Zip size must be have 5 characters maximum")
     private int zip;
 
     private String city;
@@ -78,7 +82,7 @@ public class User {
     @JoinColumn(name = "id_beneficiary")
     private List<Transaction> transactionsBeneficiary;
 
-    public static int getCurrentUser(){
+    public static int getCurrentUser() {
         return 1;
     }
 }
