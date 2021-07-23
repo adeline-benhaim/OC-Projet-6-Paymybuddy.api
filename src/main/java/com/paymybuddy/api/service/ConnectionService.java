@@ -1,7 +1,6 @@
 package com.paymybuddy.api.service;
 
 import com.paymybuddy.api.model.Connection;
-import com.paymybuddy.api.model.dto.ConnectionDto;
 
 import java.util.List;
 
@@ -20,7 +19,7 @@ public interface ConnectionService {
      *
      * @return a list of connections belong to current user with name and email of users connected
      */
-    List<ConnectionDto> getConnections();
+    List<Connection> getConnections();
 
     /**
      * Delete a connection belong to current user

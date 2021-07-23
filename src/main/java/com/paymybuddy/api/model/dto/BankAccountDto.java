@@ -10,6 +10,7 @@ import lombok.*;
 public class BankAccountDto {
 
     private String name;
-    private int bic;
-    private int iban;
+    private String bic;
+    private String iban;
+    private int accountId;
 }

@@ -1,12 +1,10 @@
 package com.paymybuddy.api.service;
 
-import com.paymybuddy.api.mapper.MapperDto;
 import com.paymybuddy.api.exception.ConnectionAlreadyExistException;
 import com.paymybuddy.api.exception.ConnectionNotFoundException;
 import com.paymybuddy.api.exception.UserNotFoundException;
 import com.paymybuddy.api.model.Connection;
 import com.paymybuddy.api.model.User;
-import com.paymybuddy.api.model.dto.ConnectionDto;
 import com.paymybuddy.api.repository.ConnectionRepository;
 import com.paymybuddy.api.repository.UserRepository;
 import org.slf4j.Logger;
@@ -16,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ConnectionServiceImpl implements ConnectionService {
@@ -90,13 +87,9 @@ public class ConnectionServiceImpl implements ConnectionService {
      * @return a list of connections belonging to current user with name and email of users linked
      */
     @Override
-    public List<ConnectionDto> getConnections() {
+    public List<Connection> getConnections() {
         logger.info("Get a list of connections");
-        List<Connection> connections = connectionRepository.findByIdUser(idCurrentUser);
-        return connections
-                .stream()
-                .map(MapperDto::convertToConnectionDto)
-                .collect(Collectors.toList());
+        return connectionRepository.findByIdUser(idCurrentUser);
     }
 
     /**

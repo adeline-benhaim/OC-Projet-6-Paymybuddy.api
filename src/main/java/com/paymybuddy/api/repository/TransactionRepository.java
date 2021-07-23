@@ -1,6 +1,7 @@
 package com.paymybuddy.api.repository;
 
 import com.paymybuddy.api.model.Transaction;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,6 +16,7 @@ public interface TransactionRepository extends CrudRepository<Transaction, Integ
      * @param idBeneficiary id of the beneficiary user of the transaction
      * @return a list with all transactions by transmitter user and beneficiary user
      */
+    @Query("FROM Transaction t WHERE t.idTransmitter = ?1 OR t.idBeneficiary = ?2 ORDER BY t.date DESC")
     List<Transaction> findByIdTransmitterOrIdBeneficiary(int idTransmitter, int idBeneficiary);
 
 }

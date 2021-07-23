@@ -1,6 +1,7 @@
 package com.paymybuddy.api.service;
 
 import com.paymybuddy.api.model.Transaction;
+import com.paymybuddy.api.model.dto.TransactionDto;
 
 import java.util.List;
 
@@ -14,10 +15,10 @@ public interface TransactionService {
     List<Transaction> getAllTransactions();
 
     /**
-     * Create a new transfer between the current user and a user connected
+     * Create a new transaction between the current user and a user connected
      *
-     * @param transaction to create
+     * @param transactionDto transaction to create
      * @return transaction created
      */
-    Transaction createTransaction(Transaction transaction);
+    Transaction createTransaction(TransactionDto transactionDto);
 }

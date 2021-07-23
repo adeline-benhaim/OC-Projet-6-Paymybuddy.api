@@ -1,6 +1,7 @@
 package com.paymybuddy.api.service;
 
 import com.paymybuddy.api.model.User;
+import com.paymybuddy.api.model.dto.PasswordDto;
 import com.paymybuddy.api.model.dto.UserDto;
 
 import java.util.Optional;
@@ -12,7 +13,7 @@ public interface UserService {
      *
      * @return the user sought if it exists in the database
      */
-    Optional<User> getUser();
+    User getUser();
 
     /**
      * Save a new user or update existing user
@@ -28,6 +29,13 @@ public interface UserService {
      * @return updated user information
      */
     UserDto updateUser(User user);
+
+    /**
+     * Update a current user password
+     * @param passwordDto new password to update
+     * @return password updated
+     */
+    User updatePassword(PasswordDto passwordDto);
 
     /**
      * Delete current user by password

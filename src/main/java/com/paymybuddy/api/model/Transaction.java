@@ -33,7 +33,7 @@ public class Transaction {
 
     private String description;
 
-    private int amount;
+    private double amount;
 
     private Timestamp date;
 

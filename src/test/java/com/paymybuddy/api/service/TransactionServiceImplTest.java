@@ -2,9 +2,11 @@ package com.paymybuddy.api.service;
 
 import com.paymybuddy.api.config.DataSourceTest;
 import com.paymybuddy.api.exception.TransactionException;
+import com.paymybuddy.api.model.Commission;
 import com.paymybuddy.api.model.Connection;
 import com.paymybuddy.api.model.Transaction;
 import com.paymybuddy.api.model.User;
+import com.paymybuddy.api.model.dto.TransactionDto;
 import com.paymybuddy.api.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +28,8 @@ class TransactionServiceImplTest {
     UserRepository userRepository;
     @Mock
     ConnectionRepository connectionRepository;
+    @Mock
+    CommissionRepository commissionRepository;
     @InjectMocks
     TransactionServiceImpl transactionService;
     @InjectMocks
@@ -60,13 +64,11 @@ class TransactionServiceImplTest {
         //GIVEN
         int idCurrentUser = 1;
         User currentUser = dataSourceTest.getUserListMocked().get(0);
-        User userBeneficiary = null;
-        Transaction transaction = Transaction.builder().idBeneficiary(2).build();
+        TransactionDto transactionDto = TransactionDto.builder().emailBeneficiary("unknown").build();
         Mockito.when(userRepository.findByUserId(idCurrentUser)).thenReturn(currentUser);
-        Mockito.when(userRepository.findByUserId(transaction.getIdBeneficiary())).thenReturn(userBeneficiary);
 
         //THEN
-        assertThrows(TransactionException.class, () -> transactionService.createTransaction(transaction));
+        assertThrows(TransactionException.class, () -> transactionService.createTransaction(transactionDto));
     }
 
     @Test
@@ -77,12 +79,12 @@ class TransactionServiceImplTest {
         int idCurrentUser = 1;
         User currentUser = dataSourceTest.getUserListMocked().get(0);
         User userBeneficiary = dataSourceTest.getUserListMocked().get(1);
-        Transaction transaction = Transaction.builder().idBeneficiary(2).amount(500).build();
+        TransactionDto transactionDto = TransactionDto.builder().emailBeneficiary("email2").amount(500).build();
         Mockito.when(userRepository.findByUserId(idCurrentUser)).thenReturn(currentUser);
-        Mockito.when(userRepository.findByUserId(transaction.getIdBeneficiary())).thenReturn(userBeneficiary);
+        Mockito.when(userRepository.findUserIdByEmail(transactionDto.getEmailBeneficiary())).thenReturn(userBeneficiary);
 
         //THEN
-        assertThrows(TransactionException.class, () -> transactionService.createTransaction(transaction));
+        assertThrows(TransactionException.class, () -> transactionService.createTransaction(transactionDto));
     }
 
     @Test
@@ -93,23 +95,23 @@ class TransactionServiceImplTest {
         int idCurrentUser = 1;
         User currentUser = dataSourceTest.getUserListMocked().get(0);
         User userBeneficiary = dataSourceTest.getUserListMocked().get(1);
-        Transaction transaction = Transaction.builder().idBeneficiary(2).amount(10).build();
+        TransactionDto transactionDto = TransactionDto.builder().emailBeneficiary("email2").amount(10).build();
         Mockito.when(userRepository.findByUserId(idCurrentUser)).thenReturn(currentUser);
-        Mockito.when(userRepository.findByUserId(transaction.getIdBeneficiary())).thenReturn(userBeneficiary);
+        Mockito.when(userRepository.findUserIdByEmail(transactionDto.getEmailBeneficiary())).thenReturn(userBeneficiary);
         Connection connection = dataSourceTest.getConnectionListMocked().get(0);
         Mockito.when(connectionRepository.findByIdUserAndEmailOfUserLinked(currentUser.getUserId(), userBeneficiary.getEmail())).thenReturn(connection);
-        int balanceCurrentUserBeforeTransaction = dataSourceTest.getUserListMocked().get(0).getBalance();
-        int balanceUserBeneficiaryBeforeTransaction = dataSourceTest.getUserListMocked().get(1).getBalance();
+        double balanceCurrentUserBeforeTransaction = dataSourceTest.getUserListMocked().get(0).getBalance();
+        double balanceUserBeneficiaryBeforeTransaction = dataSourceTest.getUserListMocked().get(1).getBalance();
 
         //WHEN
-        transactionService.createTransaction(transaction);
-        int balanceCurrentUserAfterTransaction = dataSourceTest.getUserListMocked().get(0).getBalance();
-        int balanceUserBeneficiaryAfterTransaction = dataSourceTest.getUserListMocked().get(1).getBalance();
+        transactionService.createTransaction(transactionDto);
+        double balanceCurrentUserAfterTransaction = dataSourceTest.getUserListMocked().get(0).getBalance();
+        double balanceUserBeneficiaryAfterTransaction = dataSourceTest.getUserListMocked().get(1).getBalance();
 
         //THEN
-        assertEquals(90, dataSourceTest.getUserListMocked().get(0).getBalance());
+        assertEquals(89.5, dataSourceTest.getUserListMocked().get(0).getBalance());
         assertEquals(60, dataSourceTest.getUserListMocked().get(1).getBalance());
-        assertEquals(balanceCurrentUserBeforeTransaction - 10, balanceCurrentUserAfterTransaction);
+        assertEquals(balanceCurrentUserBeforeTransaction - 10.5, balanceCurrentUserAfterTransaction);
         assertEquals(balanceUserBeneficiaryBeforeTransaction + 10, balanceUserBeneficiaryAfterTransaction);
     }
 

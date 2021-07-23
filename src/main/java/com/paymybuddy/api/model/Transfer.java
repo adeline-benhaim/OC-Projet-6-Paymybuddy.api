@@ -3,6 +3,8 @@ package com.paymybuddy.api.model;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.sql.Timestamp;
 
 @Entity
@@ -25,7 +27,9 @@ public class Transfer {
     @Column(name = "id_user")
     private int idUser;
 
-    private int amount;
+    @Max(value=999)
+    @Min(value = 1)
+    private double amount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "transfer_type")

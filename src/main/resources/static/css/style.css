@@ -1,0 +1,27 @@
+
+.green {
+background-color: #6ebc56;
+color: white;
+}
+body {
+	padding-top: 50px;
+}
+special {
+	padding-top: 50px;
+}
+img {
+    border-radius: 10px;
+    width: 152px;
+    height: 40.8px;
+    margin-top : 5px;
+}
+.pay {
+text-align: center;
+background-color: #f9f9f9;
+padding: 5% 10% 5% 10%;
+ }
+
+ .home{
+text-align: center;
+padding: 5% 10% 5% 10%;
+ }

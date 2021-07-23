@@ -1,6 +1,8 @@
 package com.paymybuddy.api.model;
 
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicUpdate
 @Table(name = "bank_account")
 public class BankAccount {
 
@@ -24,16 +27,13 @@ public class BankAccount {
 
     private String name;
 
-    private int bic;
+    private String bic;
 
-    private int iban;
+    private String iban;
 
     @OneToMany(
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            },
-            fetch = FetchType.LAZY)
+                    orphanRemoval = true,
+                    fetch = FetchType.LAZY)
     @JoinColumn(name = "id_bank_account")
     private List<Transfer> transferList;
 }

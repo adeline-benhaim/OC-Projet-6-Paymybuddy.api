@@ -18,7 +18,7 @@ class TransferTest {
         int transferId = 1;
         int idBankAccount = 1;
         int idUser = 1;
-        int amount = 100;
+        double amount = 100;
         Transfer.TransferType transferType = Transfer.TransferType.DEBIT;
         Timestamp date = null;
         boolean success = true;
@@ -28,7 +28,7 @@ class TransferTest {
                 .transferId(1)
                 .idBankAccount(1)
                 .idUser(1)
-                .amount(100)
+                .amount(100.0)
                 .transferType(Transfer.TransferType.DEBIT)
                 .date(null)
                 .success(true)

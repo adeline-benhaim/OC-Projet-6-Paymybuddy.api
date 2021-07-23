@@ -38,7 +38,7 @@ class BankAccountServiceImplTest {
 
         //GIVEN
         Mockito.when(bankAccountRepository.existsByIdUserAndName(1, "bank3")).thenReturn(false);
-        BankAccount newBankAccount = BankAccount.builder().idUser(1).name("bank3").iban(3333).bic(3333).build();
+        BankAccount newBankAccount = BankAccount.builder().idUser(1).name("bank3").iban("3333").bic("3333").build();
 
         //WHEN
         bankAccountService.createBankAccount(newBankAccount);
@@ -53,7 +53,7 @@ class BankAccountServiceImplTest {
 
         //GIVEN
         Mockito.when(bankAccountRepository.existsByIdUserAndName(1, "bank1")).thenReturn(true);
-        BankAccount newBankAccount = BankAccount.builder().idUser(1).name("bank1").iban(3333).bic(3333).build();
+        BankAccount newBankAccount = BankAccount.builder().idUser(1).name("bank1").iban("3333").bic("3333").build();
 
         //THEN
         assertThrows(BankAccountException.class, () -> bankAccountService.createBankAccount(newBankAccount));

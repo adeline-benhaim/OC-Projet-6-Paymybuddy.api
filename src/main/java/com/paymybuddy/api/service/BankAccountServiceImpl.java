@@ -1,7 +1,7 @@
 package com.paymybuddy.api.service;
 
-import com.paymybuddy.api.mapper.MapperDto;
 import com.paymybuddy.api.exception.BankAccountException;
+import com.paymybuddy.api.mapper.MapperDto;
 import com.paymybuddy.api.model.BankAccount;
 import com.paymybuddy.api.model.User;
 import com.paymybuddy.api.model.dto.BankAccountDto;
@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,6 +60,47 @@ public class BankAccountServiceImpl implements BankAccountService {
                 .stream()
                 .map(MapperDto::convertToBankAccountDto)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Get a bank account by account ID
+     *
+     * @param accountId of the requested bank account
+     * @return bank account
+     */
+    public Optional<BankAccount> getBankAccount(int accountId) {
+        logger.info("Get a bank account by ID account");
+        return bankAccountRepository.findById(accountId);
+    }
+
+    /**
+     * Update a bank account belonging to current user
+     *
+     * @param bankAccount information's to update
+     * @return bank account information's to update
+     */
+    @Override
+    public BankAccount updateBankAccount(int accountId, BankAccount bankAccount) {
+        logger.info("Update a bank account");
+        BankAccount bankAccountToUpdate = bankAccountRepository.findByAccountId(accountId);
+        bankAccountToUpdate.setAccountId(accountId);
+        bankAccountToUpdate.setName(bankAccount.getName());
+        bankAccountToUpdate.setBic(bankAccount.getBic());
+        bankAccountToUpdate.setIban(bankAccount.getIban());
+        logger.info("Bank account updated");
+        return bankAccountRepository.save(bankAccountToUpdate);
+
+    }
+
+    /**
+     * Delete a bank account by account ID
+     *
+     * @param accountId ID of bank account to delete
+     */
+    @Override
+    public void deleteBankAccount(int accountId) {
+        logger.info("Delete bank account : " + accountId);
+        bankAccountRepository.deleteById(accountId);
     }
 
 }
