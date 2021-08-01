@@ -64,6 +64,6 @@ public class TransferController {
         model.addAttribute("transfer", t);
         List<BankAccountDto> bankAccountList = bankAccountService.getAllByIdUser();
         model.addAttribute("bankAccount", bankAccountList);
-        return "formNewTransfer.html";
+        return "formNewTransfer";
     }
 }

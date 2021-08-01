@@ -1,13 +1,15 @@
 package com.paymybuddy.api.service;
 
 import com.paymybuddy.api.config.DataSourceTest;
+import com.paymybuddy.api.constants.CommissionRate;
 import com.paymybuddy.api.exception.TransactionException;
-import com.paymybuddy.api.model.Commission;
 import com.paymybuddy.api.model.Connection;
-import com.paymybuddy.api.model.Transaction;
 import com.paymybuddy.api.model.User;
 import com.paymybuddy.api.model.dto.TransactionDto;
-import com.paymybuddy.api.repository.*;
+import com.paymybuddy.api.repository.CommissionRepository;
+import com.paymybuddy.api.repository.ConnectionRepository;
+import com.paymybuddy.api.repository.TransactionRepository;
+import com.paymybuddy.api.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,8 +18,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionServiceImplTest {
@@ -34,6 +41,8 @@ class TransactionServiceImplTest {
     TransactionServiceImpl transactionService;
     @InjectMocks
     DataSourceTest dataSourceTest;
+    @InjectMocks
+    CommissionRate commissionRate;
 
     @BeforeEach
     void init() {
@@ -41,6 +50,12 @@ class TransactionServiceImplTest {
         dataSourceTest.clearUserListMocked();
         dataSourceTest.createUserListMocked();
         dataSourceTest.createConnectionListMocked();
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        Mockito.when(authentication.getName()).thenReturn("1");
     }
 
     @Test
@@ -54,7 +69,7 @@ class TransactionServiceImplTest {
         transactionService.getAllTransactions();
 
         //THEN
-        Mockito.verify(transactionRepository, Mockito.times(1)).findByIdTransmitterOrIdBeneficiary(idCurrentUser, idCurrentUser);
+        Mockito.verify(transactionRepository, Mockito.times(1)).findByIdTransmitterOrIdBeneficiaryOrderByDateDesc(idCurrentUser, idCurrentUser);
     }
 
     @Test
@@ -65,7 +80,7 @@ class TransactionServiceImplTest {
         int idCurrentUser = 1;
         User currentUser = dataSourceTest.getUserListMocked().get(0);
         TransactionDto transactionDto = TransactionDto.builder().emailBeneficiary("unknown").build();
-        Mockito.when(userRepository.findByUserId(idCurrentUser)).thenReturn(currentUser);
+        when(userRepository.findByUserId(idCurrentUser)).thenReturn(currentUser);
 
         //THEN
         assertThrows(TransactionException.class, () -> transactionService.createTransaction(transactionDto));
@@ -80,8 +95,8 @@ class TransactionServiceImplTest {
         User currentUser = dataSourceTest.getUserListMocked().get(0);
         User userBeneficiary = dataSourceTest.getUserListMocked().get(1);
         TransactionDto transactionDto = TransactionDto.builder().emailBeneficiary("email2").amount(500).build();
-        Mockito.when(userRepository.findByUserId(idCurrentUser)).thenReturn(currentUser);
-        Mockito.when(userRepository.findUserIdByEmail(transactionDto.getEmailBeneficiary())).thenReturn(userBeneficiary);
+        when(userRepository.findByUserId(idCurrentUser)).thenReturn(currentUser);
+        when(userRepository.findUserByEmail(transactionDto.getEmailBeneficiary())).thenReturn(userBeneficiary);
 
         //THEN
         assertThrows(TransactionException.class, () -> transactionService.createTransaction(transactionDto));
@@ -96,12 +111,14 @@ class TransactionServiceImplTest {
         User currentUser = dataSourceTest.getUserListMocked().get(0);
         User userBeneficiary = dataSourceTest.getUserListMocked().get(1);
         TransactionDto transactionDto = TransactionDto.builder().emailBeneficiary("email2").amount(10).build();
-        Mockito.when(userRepository.findByUserId(idCurrentUser)).thenReturn(currentUser);
-        Mockito.when(userRepository.findUserIdByEmail(transactionDto.getEmailBeneficiary())).thenReturn(userBeneficiary);
+        when(userRepository.findByUserId(idCurrentUser)).thenReturn(currentUser);
+        when(userRepository.findUserByEmail(transactionDto.getEmailBeneficiary())).thenReturn(userBeneficiary);
         Connection connection = dataSourceTest.getConnectionListMocked().get(0);
-        Mockito.when(connectionRepository.findByIdUserAndEmailOfUserLinked(currentUser.getUserId(), userBeneficiary.getEmail())).thenReturn(connection);
+        when(connectionRepository.findByIdUserAndEmailOfUserLinked(currentUser.getUserId(), userBeneficiary.getEmail())).thenReturn(connection);
         double balanceCurrentUserBeforeTransaction = dataSourceTest.getUserListMocked().get(0).getBalance();
         double balanceUserBeneficiaryBeforeTransaction = dataSourceTest.getUserListMocked().get(1).getBalance();
+        double commission = transactionDto.getAmount() * CommissionRate.COMMISSION_RATE;
+        double maximumAuthorizedAmount =  balanceCurrentUserBeforeTransaction / CommissionRate.RATE_CALCULATION_MAXIMUM_AUTHORIZED;
 
         //WHEN
         transactionService.createTransaction(transactionDto);
@@ -113,6 +130,8 @@ class TransactionServiceImplTest {
         assertEquals(60, dataSourceTest.getUserListMocked().get(1).getBalance());
         assertEquals(balanceCurrentUserBeforeTransaction - 10.5, balanceCurrentUserAfterTransaction);
         assertEquals(balanceUserBeneficiaryBeforeTransaction + 10, balanceUserBeneficiaryAfterTransaction);
+        assertEquals(0.5, commission);
+        assertEquals(95.24, Math.round(maximumAuthorizedAmount*100.0)/100.0);
     }
 
 }

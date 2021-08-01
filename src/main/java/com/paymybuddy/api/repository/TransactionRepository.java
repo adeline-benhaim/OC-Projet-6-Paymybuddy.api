@@ -16,7 +16,7 @@ public interface TransactionRepository extends CrudRepository<Transaction, Integ
      * @param idBeneficiary id of the beneficiary user of the transaction
      * @return a list with all transactions by transmitter user and beneficiary user
      */
-    @Query("FROM Transaction t WHERE t.idTransmitter = ?1 OR t.idBeneficiary = ?2 ORDER BY t.date DESC")
-    List<Transaction> findByIdTransmitterOrIdBeneficiary(int idTransmitter, int idBeneficiary);
+//    @Query("FROM Transaction t WHERE t.idTransmitter = ?1 OR t.idBeneficiary = ?2 ORDER BY t.date DESC")
+    List<Transaction> findByIdTransmitterOrIdBeneficiaryOrderByDateDesc(int idTransmitter, int idBeneficiary);
 
 }

@@ -38,7 +38,7 @@ public interface UserRepository extends CrudRepository<User, Integer> {
      * @param email of the user to find
      * @return user found
      */
-    User findUserIdByEmail(String email);
+    User findUserByEmail(String email);
 
     /**
      * Delete user with their ID and password

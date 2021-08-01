@@ -1,35 +1,67 @@
-
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <title>Pay My Buddy</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-    <link href="https://getbootstrap.com/docs/4.0/examples/signin/signin.css" rel="stylesheet" crossorigin="anonymous"/>
-</head>
-<body>
-<div class="container form-signin text-center">
-    <img alt="Brand" src="css/logo.JPG">
-</div>
-<div class="container">
-    <form class="form-signin" method="post" action="/login">
+<html xmlns="http://www.w3.org/1999/xhml"
+      xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 
-        <p>
-            <label for="username" class="sr-only">Email</label>
-            <input type="text" id="username" name="username" class="form-control" placeholder="Email" required autofocus>
-        </p>
-        <p>
-            <label for="password" class="sr-only">Password</label>
-            <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
-        </p>
-        <input name="_csrf" type="hidden" value="b29fedd4-2fde-4a9e-a1ce-00f73f474d88" />
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet"
+          href="css/style.css">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+          integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css"
+          integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
+            integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
+            crossorigin="anonymous"></script>
+
+    <title>Pay my buddy web application</title>
+
+</head>
+
+<body>
+<div class="login form-signin text-center">
+    <div class="logo form-signin text-center">
+        <img alt="Brand" src="css/logo.JPG">
+    </div>
+    <form class="form-signin" method="post" th:action="@{/login}">
+        <div class="row formMargin">
+            <div th:if="${param.failure}">
+                <p class="alert alert-danger">Invalid username or password</p>
+            </div>
+            <p>
+                <label for="username" class="sr-only">Email</label>
+                <input type="text" id="email" name="email" class="form-control" placeholder="Email" required
+                       autofocus>
+            </p>
+        </div>
+        <div class="row">
+            <p>
+                <label for="password" class="sr-only">Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Password"
+                       required>
+            </p>
+        </div>
+        <div class="text-right formMargin">
+            <input type="checkbox" id="remember-me" name="remember-me">
+            <label for="remember-me">Remember me</label>
+        </div>
+        <div class=" formMargin">
+            <p>You don't have account ? <a th:href="@{/createUser}">Create account</a></p>
+        </div>
+        <div class="text-center formMargin">
+            <button type="submit" class="btn btn-primary">Login</button>
+        </div>
     </form>
 </div>
-<div class="container form-signin text-right">
-    <p><a th:href="@{/createUser}">Create account</a></p>
-</div>
-</body></html>
+</body>
+</html>

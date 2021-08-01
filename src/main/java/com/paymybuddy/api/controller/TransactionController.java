@@ -3,11 +3,9 @@ package com.paymybuddy.api.controller;
 import com.paymybuddy.api.exception.TransactionException;
 import com.paymybuddy.api.model.Connection;
 import com.paymybuddy.api.model.Transaction;
-import com.paymybuddy.api.model.User;
 import com.paymybuddy.api.model.dto.TransactionDto;
 import com.paymybuddy.api.service.ConnectionService;
 import com.paymybuddy.api.service.TransactionService;
-import com.paymybuddy.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,17 +25,14 @@ public class TransactionController {
     TransactionService transactionService;
     @Autowired
     ConnectionService connectionService;
-    @Autowired
-    UserService userService;
 
-    @GetMapping("/transaction")
+    @GetMapping("/transactions")
     public String transaction(Model model) {
         List<Transaction> transactionList = transactionService.getAllTransactions();
-        model.addAttribute("transaction", transactionList);
-        User user = userService.getUser();
-        model.addAttribute("user", user);
+        model.addAttribute("transactions", transactionList);
         List<Connection> connections = connectionService.getConnections();
-        model.addAttribute("connection", connections);
+        model.addAttribute("connections", connections);
+        model.addAttribute("transactionDto", new TransactionDto());
         return "transaction";
     }
 
@@ -47,25 +42,31 @@ public class TransactionController {
         if (!result.hasErrors()) {
             try {
                 transactionService.createTransaction(transactionDto);
-                return "redirect:/transaction";
+                return "redirect:/transactions";
             } catch (TransactionException e) {
                 ObjectError objectError = new ObjectError("objectError", e.getMessage());
                 result.addError(objectError);
-                model.addAttribute("transactionDto", transactionDto);
-                return "transaction";
             }
         }
+
+        List<Transaction> transactionList = transactionService.getAllTransactions();
+        model.addAttribute("transactions", transactionList);
+        List<Connection> connections = connectionService.getConnections();
+        model.addAttribute("connections", connections);
         model.addAttribute("transactionDto", transactionDto);
+
         return "transaction";
     }
 
 
     @GetMapping("/createTransaction")
     public String createTransaction(Model model) {
-        List<Connection> connection = connectionService.getConnections();
-        model.addAttribute("connection", connection);
-        Transaction transaction = new Transaction();
-        model.addAttribute("transaction", transaction);
+        List<Transaction> transactionList = transactionService.getAllTransactions();
+        model.addAttribute("transactions", transactionList);
+        List<Connection> connections = connectionService.getConnections();
+        model.addAttribute("connection", connections);
+        TransactionDto transactionDto = new TransactionDto();
+        model.addAttribute("transactionDto", transactionDto);
         return "transaction";
     }
 }

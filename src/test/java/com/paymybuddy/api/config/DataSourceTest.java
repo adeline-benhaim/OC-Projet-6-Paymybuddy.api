@@ -1,8 +1,11 @@
 package com.paymybuddy.api.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymybuddy.api.model.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +14,9 @@ import java.util.List;
 @Getter
 @Setter
 public class DataSourceTest {
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     /**
      * Mock User
@@ -22,9 +28,9 @@ public class DataSourceTest {
     }
 
     public void createUserListMocked() {
-        User user1 = User.builder().userId(1).email("email1").password("password1").firstName("firstname1").lastName("lastname1").address("address1").zip(1000).city("city1").phone("01000").connectionsUser(connectionListMocked).balance(100).build();
-        User user2 = User.builder().userId(2).email("email2").password("password2").connectionsUser(null).balance(50).build();
-        User user3 = User.builder().userId(3).email("email3").password("password3").connectionsUser(null).balance(500).build();
+        User user1 = User.builder().userId(1).email("email1").password("password1").firstName("firstname1").lastName("lastname1").address("address1").zip(1000).city("city1").phone("01000").role("USER").connectionsUser(connectionListMocked).balance(100).build();
+        User user2 = User.builder().userId(2).email("email2").password("password2").connectionsUser(null).balance(50).role("USER").build();
+        User user3 = User.builder().userId(3).email("email3").password("password3").connectionsUser(null).balance(500).role("USER").build();
         userListMocked.addAll(Arrays.asList(user1, user2, user3));
     }
 
@@ -79,4 +85,11 @@ public class DataSourceTest {
         bankAccountListMocked.addAll(Arrays.asList(bankAccount1, bankAccount2, bankAccount3));
     }
 
+    public static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

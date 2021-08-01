@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.paymybuddy.api.service.SecurityUtils.getIdCurrentUser;
+
 @Service
 public class ConnectionServiceImpl implements ConnectionService {
     private static final Logger logger = LoggerFactory.getLogger(ConnectionServiceImpl.class);
@@ -25,8 +27,6 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Autowired
     UserRepository userRepository;
 
-    int idCurrentUser = User.getCurrentUser();
-
     /**
      * Check if current user connections contains user's email
      *
@@ -35,7 +35,7 @@ public class ConnectionServiceImpl implements ConnectionService {
      */
     private boolean isUserLinked(String email) {
         logger.info("Check if is a user linked to current user connection");
-        return connectionRepository.existsByIdUserAndEmailOfUserLinked(idCurrentUser, email);
+        return connectionRepository.existsByIdUserAndEmailOfUserLinked(getIdCurrentUser(), email);
     }
 
     /**
@@ -59,7 +59,7 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Transactional
     public Connection createConnection(Connection connection) {
         logger.info("Create a new connection");
-        User currentUser = userRepository.findByUserId(idCurrentUser);
+        User currentUser = userRepository.findByUserId(getIdCurrentUser());
         String currentUserEmail = currentUser.getEmail();
         if (currentUserEmail.equals(connection.getEmailOfUserLinked())) {
             logger.error("Unable to create connection with the current user email");
@@ -70,14 +70,14 @@ public class ConnectionServiceImpl implements ConnectionService {
         } else if (!isUserLinked(connection.getEmailOfUserLinked())) {
             logger.info("New connection created");
             Connection newConnection = Connection.builder()
-                    .idUser(idCurrentUser)
+                    .idUser(getIdCurrentUser())
                     .emailOfUserLinked(connection.getEmailOfUserLinked())
                     .name(connection.getName())
                     .build();
             return connectionRepository.save(newConnection);
         }
         logger.error("Unable to create connection because email already exist in connections of current user");
-        throw new ConnectionAlreadyExistException("Unable to create this connection because email : " + connection.getEmailOfUserLinked() + " already exist in connections of user id : " + idCurrentUser);
+        throw new ConnectionAlreadyExistException("Unable to create this connection because email : " + connection.getEmailOfUserLinked() + " already exist in your connections");
 
     }
 
@@ -89,7 +89,7 @@ public class ConnectionServiceImpl implements ConnectionService {
     @Override
     public List<Connection> getConnections() {
         logger.info("Get a list of connections");
-        return connectionRepository.findByIdUser(idCurrentUser);
+        return connectionRepository.findByIdUser(getIdCurrentUser());
     }
 
     /**
@@ -103,9 +103,9 @@ public class ConnectionServiceImpl implements ConnectionService {
         logger.info("Delete an existing connection");
         if (!isUserLinked(email)) {
             logger.error("Unable to delete connection because email doesn't exist in connections of current user");
-            throw new ConnectionNotFoundException("Unable to delete this connection because email : " + email + " doesn't exist in connections of user id : " + idCurrentUser);
+            throw new ConnectionNotFoundException("Unable to delete this connection because email : " + email + " doesn't exist in connections of user id : " + getIdCurrentUser());
         }
-        connectionRepository.deleteByIdUserAndEmailOfUserLinked(idCurrentUser, email);
+        connectionRepository.deleteByIdUserAndEmailOfUserLinked(getIdCurrentUser(), email);
         logger.info("Connection deleted");
     }
 }

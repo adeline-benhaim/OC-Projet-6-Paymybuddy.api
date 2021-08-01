@@ -38,10 +38,10 @@
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/home">Home</a></li>
                 <li><a href="/transfer">Transfer</a></li>
-                <li><a href="/transaction">Transaction</a></li>
+                <li><a href="/transactions">Transaction</a></li>
                 <li><a href="/profile">Profile</a></li>
                 <li><a href="#">Contact</a></li>
-                <li><a href="/">Log off</a></li>
+                <li><a href="/logout">Log off</a></li>
             </ul>
         </div>
     </div>
@@ -68,10 +68,10 @@
                 <div class="row">
                     <div class="form-group col-xs-6">
                         <label for="first_name">First name</label>
-                        <input type="text" th:field="*{firstName}" class="form-control" name="first_name"
+                        <input type="text" th:field="*{firstName}" class="form-control"
                                id="first_name" placeholder="first name" title="enter your first name if any."
-                               th:value="${user.firstName}"> <small
-                            id="nameBankAccountHelp" class="form-text text-muted">Enter the new bank account
+                               th:value="${user.firstName}" required> <small
+                            id="nameBankAccountHelp" class="form-text text-muted">Enter the new first
                         name.</small>
                     </div>
 
@@ -79,8 +79,8 @@
                         <label for="last_name">Last name</label>
                         <input type="text" th:field="*{lastName}" class="form-control" name="last_name"
                                id="last_name" placeholder="last name" title="enter your last name if any."
-                               th:value="${user.lastName}"> <small
-                            id="nameBankAccountHelp" class="form-text text-muted">Enter the new bank account
+                               th:value="${user.lastName}" required> <small
+                            id="nameBankAccountHelp" class="form-text text-muted">Enter the new last
                         name.</small>
                     </div>
                 </div>
@@ -91,18 +91,16 @@
                         <input type="text" th:field="*{address}" class="form-control" name="address"
                                id="address"
                                placeholder="enter address" title="enter your address if any."
-                               th:value="${user.address}"> <small
-                            id="nameBankAccountHelp" class="form-text text-muted">Enter the new bank account
-                        name.</small>
+                               th:value="${user.address}" required> <small
+                            id="nameBankAccountHelp" class="form-text text-muted">Enter the new address.</small>
                     </div>
 
                     <div class="form-group col-xs-6">
                         <label for="zip">Zip</label>
                         <input type="text" th:field="*{zip}" class="form-control" name="zip" id="zip"
                                placeholder="enter zip number" title="enter your zip number if any."
-                               th:value="${user.zip}"> <small
-                            id="nameBankAccountHelp" class="form-text text-muted">Enter the new bank account
-                        name.</small>
+                               th:value="${user.zip}" required> <small
+                            id="nameBankAccountHelp" class="form-text text-muted">Enter the new zip.</small>
                     </div>
                 </div>
 
@@ -111,18 +109,16 @@
                         <label for="city">City</label>
                         <input type="text" th:field="*{city}" class="form-control" name="city" id="city"
                                placeholder="enter city" title="enter your city."
-                               th:value="${user.city}"> <small
-                            id="nameBankAccountHelp" class="form-text text-muted">Enter the new bank account
-                        name.</small>
+                               th:value="${user.city}" required> <small
+                            id="nameBankAccountHelp" class="form-text text-muted">Enter the new city.</small>
                     </div>
 
                     <div class="form-group col-xs-6">
                         <label for="phone">Phone</label>
                         <input type="text" th:field="*{phone}" class="form-control" id="phone"
                                placeholder="enter phone" title="enter your phone"
-                               th:value="${user.phone}"> <small
-                            id="nameBankAccountHelp" class="form-text text-muted">Enter the new bank account
-                        name.</small>
+                               th:value="${user.phone}" required> <small
+                            id="nameBankAccountHelp" class="form-text text-muted">Enter the new phone number.</small>
                     </div>
                 </div>
                 <div class="row">
@@ -196,16 +192,21 @@
 
         <div class="tab-pane" id="settings">
             <hr>
-            <form class="form" method="post" th:action="@{/updatePassword}" object="${passwordDto}"
-                  id="registrationForm">
+            <form class="form" method="post" th:action="@{/updatePassword}" th:object="${passwordDto}" id="registrationForm">
+
+                <div class="alert alert-primary" role="alert" th:text="${success}" th:if="${success}"></div>
+
+                <div class="alert alert-danger" th:if="${#fields.hasErrors('global')}" >
+                    <p th:errors="*{global}"></p>
+                </div>
 
                 <h2 class="h2">My password</h2>
                 <div class="row">
                     <div class="form-group col-xs-6">
                         <label>Current Password</label>
                         <div class="form-group pass_show">
-                            <input type="password" name="currentPassword" class="form-control"
-                                   placeholder="Current Password">
+                            <input type="password" th:field="*{currentPassword}" class="form-control"
+                                   placeholder="Current Password"/>
                         </div>
                     </div>
                 </div>
@@ -213,18 +214,20 @@
                     <div class="form-group col-xs-6">
                         <label>New Password</label>
                         <div class="form-group pass_show">
-                            <input type="password" name="newPassword" class="form-control"
-                                   placeholder="New Password">
+                            <input type="password" th:field="*{newPassword}" class="form-control"
+                                   placeholder="New Password"/>
                         </div>
+                        <p th:if="${#fields.hasErrors('newPassword')}" class="label label-danger" th:errors="*{newPassword}"></p>
                     </div>
                 </div>
                 <div class="row">
                     <div class="form-group col-xs-6">
                         <label>Confirm Password</label>
                         <div class="form-group pass_show">
-                            <input type="password" name="confirmPassword" class="form-control"
-                                   placeholder="Confirm Password">
+                            <input type="password" th:field="*{confirmPassword}" class="form-control"
+                                   placeholder="Confirm Password"/>
                         </div>
+                        <p th:if="${#fields.hasErrors('confirmPassword')}" class="label label-danger" th:errors="*{confirmPassword}"></p>
                     </div>
                 </div>
 
