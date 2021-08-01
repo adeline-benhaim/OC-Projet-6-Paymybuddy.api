@@ -1,5 +1,6 @@
 package com.paymybuddy.api.service;
 
+import com.paymybuddy.api.constants.CommissionRate;
 import com.paymybuddy.api.exception.TransactionException;
 import com.paymybuddy.api.model.Commission;
 import com.paymybuddy.api.model.Connection;
@@ -17,6 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.paymybuddy.api.service.SecurityUtils.getIdCurrentUser;
 
 @Service
 public class TransactionServiceImpl implements TransactionService {
@@ -31,8 +35,6 @@ public class TransactionServiceImpl implements TransactionService {
     @Autowired
     CommissionRepository commissionRepository;
 
-    int idCurrentUser = User.getCurrentUser();
-
     /**
      * Get a list of transactions issued and received belong to current user
      *
@@ -41,7 +43,14 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public List<Transaction> getAllTransactions() {
         logger.info("Get a list of all transactions");
-        return transactionRepository.findByIdTransmitterOrIdBeneficiary(idCurrentUser, idCurrentUser);
+        return transactionRepository.findByIdTransmitterOrIdBeneficiaryOrderByDateDesc(getIdCurrentUser(), getIdCurrentUser())
+                .stream()
+                .peek(transaction -> {
+                    if (transaction.getIdTransmitter() == getIdCurrentUser()) {
+                        transaction.setAmount(-transaction.getAmount());
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     /**
@@ -54,24 +63,25 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional
     public Transaction createTransaction(TransactionDto transactionDto) {
         logger.info("Create a new transaction");
-        User currentUser = userRepository.findByUserId(idCurrentUser);
-        User userBeneficiary = userRepository.findUserIdByEmail(transactionDto.getEmailBeneficiary());
+        User currentUser = userRepository.findByUserId(getIdCurrentUser());
+        User userBeneficiary = userRepository.findUserByEmail(transactionDto.getEmailBeneficiary());
         if (userBeneficiary == null) {
             logger.error("Unable to create transaction because user beneficiary doesn't exist in database");
             throw new TransactionException("Unable to create transaction because user beneficiary doesn't exist in database");
         }
-        double commission = transactionDto.getAmount() * 0.05;
+        double commission = transactionDto.getAmount() * CommissionRate.COMMISSION_RATE;
         double balanceCurrentUser = currentUser.getBalance();
         double balanceCurrentUserUpdated = balanceCurrentUser - (transactionDto.getAmount() + commission);
+        double maximumAuthorizedAmount = balanceCurrentUser / CommissionRate.RATE_CALCULATION_MAXIMUM_AUTHORIZED;
         if (balanceCurrentUserUpdated < 0) {
             logger.error("Unable to make the transaction because the balance is insufficient");
-            throw new TransactionException("Balance not sufficient to make the transaction, maximum amount authorized : " + balanceCurrentUser);
+            throw new TransactionException("Balance not sufficient to make the transaction, maximum authorized amount : " + Math.round(maximumAuthorizedAmount*100.0)/100.0);
         }
-        Connection connection = connectionRepository.findByIdUserAndEmailOfUserLinked(idCurrentUser, transactionDto.getEmailBeneficiary());
+        Connection connection = connectionRepository.findByIdUserAndEmailOfUserLinked(getIdCurrentUser(), transactionDto.getEmailBeneficiary());
         long currentDate = System.currentTimeMillis();
         Transaction newTransaction = Transaction.builder()
                 .idConnection(connection.getConnectionId())
-                .idTransmitter(idCurrentUser)
+                .idTransmitter(getIdCurrentUser())
                 .idBeneficiary(userBeneficiary.getUserId())
                 .connectionName(connection.getName())
                 .description(transactionDto.getDescription())
@@ -84,7 +94,8 @@ public class TransactionServiceImpl implements TransactionService {
         currentUser.setBalance(balanceCurrentUserUpdated);
         userBeneficiary.setBalance(balanceUserBeneficiaryUpdated);
         Commission newCommission = Commission.builder()
-                .idTransaction(newTransaction.getTransactionId())
+                .idTransmitter(currentUser.getUserId())
+                .idBeneficiary(userBeneficiary.getUserId())
                 .amount(commission)
                 .date(newTransaction.getDate())
                 .build();

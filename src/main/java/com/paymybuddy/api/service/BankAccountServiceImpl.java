@@ -3,7 +3,6 @@ package com.paymybuddy.api.service;
 import com.paymybuddy.api.exception.BankAccountException;
 import com.paymybuddy.api.mapper.MapperDto;
 import com.paymybuddy.api.model.BankAccount;
-import com.paymybuddy.api.model.User;
 import com.paymybuddy.api.model.dto.BankAccountDto;
 import com.paymybuddy.api.repository.BankAccountRepository;
 import org.slf4j.Logger;
@@ -15,14 +14,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.paymybuddy.api.service.SecurityUtils.getIdCurrentUser;
+
 @Service
 public class BankAccountServiceImpl implements BankAccountService {
     private static final Logger logger = LoggerFactory.getLogger(BankAccountServiceImpl.class);
 
     @Autowired
     BankAccountRepository bankAccountRepository;
-
-    int idCurrentUser = User.getCurrentUser();
 
     /**
      * Create a new bank account belonging to current user
@@ -33,12 +32,12 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Override
     public BankAccount createBankAccount(BankAccount bankAccount) {
         logger.info("Create new bank account");
-        if (bankAccountRepository.existsByIdUserAndName(idCurrentUser, bankAccount.getName())) {
+        if (bankAccountRepository.existsByIdUserAndName(getIdCurrentUser(), bankAccount.getName())) {
             logger.error("Unable to create bank account because bank account name : " + bankAccount.getName() + " already exist");
             throw new BankAccountException("Unable to create bank account because bank account name : " + bankAccount.getName() + " already exist");
         }
         BankAccount newBankAccount = BankAccount.builder()
-                .idUser(idCurrentUser)
+                .idUser(getIdCurrentUser())
                 .name(bankAccount.getName())
                 .bic(bankAccount.getBic())
                 .iban(bankAccount.getIban())
@@ -55,7 +54,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Override
     public List<BankAccountDto> getAllByIdUser() {
         logger.info("Get a list of bank accounts");
-        List<BankAccount> bankAccountList = bankAccountRepository.findByIdUser(idCurrentUser);
+        List<BankAccount> bankAccountList = bankAccountRepository.findByIdUser(getIdCurrentUser());
         return bankAccountList
                 .stream()
                 .map(MapperDto::convertToBankAccountDto)

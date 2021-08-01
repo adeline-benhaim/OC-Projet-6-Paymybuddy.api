@@ -38,10 +38,10 @@
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/home">Home</a></li>
                 <li><a href="/transfer">Transfer</a></li>
-                <li><a href="/transaction">Transaction</a></li>
+                <li><a href="/transactions">Transaction</a></li>
                 <li><a href="/profile">Profile</a></li>
                 <li><a href="#">Contact</a></li>
-                <li><a href="/">Log off</a></li>
+                <li><a href="/logout">Log off</a></li>
             </ul>
         </div>
     </div>
@@ -65,39 +65,40 @@
     </div>
 
     <div class="pay">
-        <form method="post"
-              th:action="@{/createTransaction}" th:object="${transactionDto}">
 
-<!--            <div class="alert alert-danger" th:if="${#fields.hasErrors('global')}" >-->
-<!--                <p th:errors="*{global}"></p>-->
-<!--            </div>-->
+        <form method="post"
+               th:action="@{/createTransaction}" th:object="${transactionDto}">
+
+            <div class="alert alert-danger" th:if="${#fields.hasErrors('global')}" >
+                <p th:errors="*{global}"></p>
+            </div>
 
             <div class="row">
 
                 <div class="col-md-3">
-                    <select class="form-control" name="emailBeneficiary" >
-<!--                        th:field="*{emailBeneficiary}"-->
+                    <select class="form-control" th:field="*{emailBeneficiary}" required>
+
+
                         <option value="">Select connection</option>
-                        <option th:each="connection : ${connection}"
+                        <option th:each="connection : ${connections}"
                                 th:value="${connection.emailOfUserLinked}"
                                 th:text="${connection.name}+' : '+${connection.emailOfUserLinked}"></option>
                     </select>
                 </div>
                 <div class="col-md-3">
                     <input
-                            type="text" name="description" class="form-control" id="description"
-                            aria-describedby="descriptionHelp" placeholder="Enter the description">
-<!--                    th:field="*{description}"-->
+                            type="text" th:field="*{description}" class="form-control" id="description"
+                            aria-describedby="descriptionHelp" placeholder="Enter the description" required>
+
                 </div>
 
                 <div class="col-md-3">
                     <div class="input-group">
                         <span class="input-group-addon">€</span>
-                        <input type="text" name="amount" class="form-control" aria-label="Amount (to the nearest euro)">
+                        <input type="text" th:field="*{amount}" class="form-control" aria-label="Amount (to the nearest euro)">
                         <span class="input-group-addon">.00</span>
-<!--                        th:field="*{amount}"-->
                     </div>
-<!--                    <p th:if="${#fields.hasErrors('amount')}" class="label label-danger" th:errors="*{amount}"></p>-->
+                    <p th:if="${#fields.hasErrors('amount')}" class="label label-danger" th:errors="*{amount}"></p>
                 </div>
 
                 <div class="col-md-3">
@@ -121,18 +122,13 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:if="${transaction.empty}">
+            <tr th:if="${transactions.empty}">
                 <td colspan="3">No transaction yet</td>
             </tr>
-            <tr th:each="transaction: ${transaction}">
+            <tr th:each="transaction: ${transactions}" >
                 <td><span th:text="${transaction.connectionName}"> Connections </span></td>
                 <td><span th:text="${transaction.description}"> Description </span></td>
-                <td>
-                    <span th:if="${transaction.idTransmitter} == ${user.userId}"
-                    th:text="'-' + ${transaction.amount}"> Amount </span>
-                    <span th:if="${transaction.idBeneficiary} == ${user.userId}"
-                    th:text="'+' +${transaction.amount}"> Amount </span>
-                </td>
+                <td><span th:text="${transaction.amount}"></span></td>
             </tr>
             </tbody>
         </table>

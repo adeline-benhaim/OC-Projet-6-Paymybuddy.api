@@ -36,10 +36,10 @@
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/home">Home</a></li>
                 <li><a href="/transfer">Transfer</a></li>
-                <li><a href="/transaction">Transaction</a></li>
+                <li><a href="/transactions">Transaction</a></li>
                 <li><a href="/profile">Profile</a></li>
                 <li><a href="#">Contact</a></li>
-                <li><a href="/">Log off</a></li>
+                <li><a href="/logout">Log off</a></li>
             </ul>
         </div>
     </div>
@@ -55,7 +55,7 @@
 
     <br>
     <div>
-        <a href="/profile#BankAccount">
+        <a href="/profileBankAccount">
             <button class="btn btn-secondary btn-sm pull-left" type="submit">
                 < Back
             </button>
@@ -75,8 +75,8 @@
                 <div class="form-group col-xs-6">
                     <label for="nameBankAccountInput">Bank account name</label>
                     <input
-                            type="text" name="name" class="form-control" id="nameBankAccountInput"
-                            aria-describedby="nameBankAccountHelp" placeholder="Enter the bank account name"> <small
+                            type="text" th:field="*{name}" class="form-control" id="nameBankAccountInput"
+                            aria-describedby="nameBankAccountHelp" placeholder="Enter the bank account name" required> <small
                         id="nameBankAccountHelp" class="form-text text-muted">Enter the bank account name.</small>
                 </div>
             </div>
@@ -84,8 +84,8 @@
                 <div class="form-group col-xs-6">
                     <label for="bic">BIC</label>
                     <input
-                            type="text" name="bic" class="form-control" id="bicInput"
-                            aria-describedby="amountHelp" placeholder="Enter the BIC number"> <small
+                            type="text" th:field="*{bic}" class="form-control" id="bicInput"
+                            aria-describedby="amountHelp" placeholder="Enter the BIC number" required> <small
                         id="bicHelp" class="form-text text-muted">Enter the BIC number.</small>
                 </div>
             </div>
@@ -93,8 +93,8 @@
                 <div class="form-group col-xs-6">
                     <label for="bic">IBAN</label>
                     <input
-                            type="text" name="iban" class="form-control" id="ibanInput"
-                            aria-describedby="ibanHelp" placeholder="Enter the IBAN number"> <small
+                            type="text" th:field="*{iban}" class="form-control" id="ibanInput"
+                            aria-describedby="ibanHelp" placeholder="Enter the IBAN number" required> <small
                         id="ibanHelp" class="form-text text-muted">Enter the IBAN number.</small>
                 </div>
             </div>

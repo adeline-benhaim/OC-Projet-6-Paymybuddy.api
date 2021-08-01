@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.paymybuddy.api.service.SecurityUtils.getIdCurrentUser;
+
 @Service
 public class TransferServiceImpl implements TransferService {
     private static final Logger logger = LoggerFactory.getLogger(TransferServiceImpl.class);
@@ -23,8 +25,6 @@ public class TransferServiceImpl implements TransferService {
     @Autowired
     UserRepository userRepository;
 
-    int idCurrentUser = User.getCurrentUser();
-
     /**
      * Get the list of transfers for the current user
      *
@@ -33,7 +33,7 @@ public class TransferServiceImpl implements TransferService {
     @Override
     public List<Transfer> getTransfers() {
         logger.info("Get a list of transfers");
-        return transferRepository.findByIdUser(idCurrentUser);
+        return transferRepository.findByIdUser(getIdCurrentUser());
     }
 
     /**
@@ -46,7 +46,7 @@ public class TransferServiceImpl implements TransferService {
     @Transactional
     public Transfer createTransfer(Transfer transfer) {
         logger.info("Create a new transfer");
-        User currentUser = userRepository.findByUserId(idCurrentUser);
+        User currentUser = userRepository.findByUserId(getIdCurrentUser());
         double balanceCurrentUser = currentUser.getBalance();
         double balanceCurrentUserUpdated = 0;
         switch (transfer.getTransferType()) {
@@ -65,7 +65,7 @@ public class TransferServiceImpl implements TransferService {
         }
         long currentDate = System.currentTimeMillis();
         Transfer newTransfer = Transfer.builder()
-                .idUser(idCurrentUser)
+                .idUser(getIdCurrentUser())
                 .idBankAccount(transfer.getIdBankAccount())
                 .amount(transfer.getAmount())
                 .transferType(transfer.getTransferType())

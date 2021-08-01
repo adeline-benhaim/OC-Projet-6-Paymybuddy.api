@@ -19,8 +19,11 @@ public class Commission {
     @Column(name = "commission_id")
     private int commissionId;
 
-    @Column(name = "id_transaction")
-    private int idTransaction;
+    @Column(name = "id_transmitter")
+    private int idTransmitter;
+
+    @Column(name = "id_beneficiary")
+    private int idBeneficiary;
 
     private double amount;
 

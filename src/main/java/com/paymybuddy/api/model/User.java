@@ -45,7 +45,7 @@ public class User {
 
     private String phone;
 
-//    private String role;
+    private String role;
 
     @OneToMany(
             cascade = CascadeType.ALL,
@@ -82,7 +82,4 @@ public class User {
     @JoinColumn(name = "id_beneficiary")
     private List<Transaction> transactionsBeneficiary;
 
-    public static int getCurrentUser() {
-        return 1;
-    }
 }

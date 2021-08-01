@@ -1,12 +1,16 @@
 package com.paymybuddy.api.controller;
 
 import com.paymybuddy.api.exception.UserAlreadyExistException;
+import com.paymybuddy.api.exception.UserNotFoundException;
 import com.paymybuddy.api.model.User;
 import com.paymybuddy.api.model.dto.BankAccountDto;
 import com.paymybuddy.api.model.dto.PasswordDto;
 import com.paymybuddy.api.service.BankAccountService;
+import com.paymybuddy.api.service.CustomUserDetailsService;
 import com.paymybuddy.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -16,6 +20,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -26,15 +32,9 @@ public class UserController {
     private UserService userService;
     @Autowired
     private BankAccountService bankAccountService;
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
 
-    @GetMapping("/profile")
-    public String user(Model model) {
-        User user = userService.getUser();
-        model.addAttribute("user", user);
-        List<BankAccountDto> bankAccount = bankAccountService.getAllByIdUser();
-        model.addAttribute("bankAccount", bankAccount);
-        return "profile";
-    }
 
     @GetMapping("/home")
     public String home(Model model) {
@@ -43,11 +43,64 @@ public class UserController {
         return "home";
     }
 
-    @GetMapping("/")
-    public String login(Model model) {
+    @GetMapping("/login")
+    public String loginPage(Model model) {
         User user = userService.getUser();
         model.addAttribute("user", user);
         return "login";
+    }
+
+    @PostMapping("/login")
+    public String login(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication == null){
+            return "login";
+        }
+        return "home";
+    }
+
+    @GetMapping("/")
+    public String homePage(Model model) {
+        return "homePage";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        customUserDetailsService.logout(request, response);
+        return "homePage";
+    }
+
+    @GetMapping("/profile")
+    public String profile(Model model) {
+        PasswordDto passwordDto = new PasswordDto();
+        model.addAttribute("passwordDto", passwordDto);
+        User user = userService.getUser();
+        model.addAttribute("user", user);
+        List<BankAccountDto> bankAccount = bankAccountService.getAllByIdUser();
+        model.addAttribute("bankAccount", bankAccount);
+        return "profileCoordinates";
+    }
+
+    @GetMapping("/profileBankAccount")
+    public String profileBankAccount(Model model) {
+        PasswordDto passwordDto = new PasswordDto();
+        model.addAttribute("passwordDto", passwordDto);
+        User user = userService.getUser();
+        model.addAttribute("user", user);
+        List<BankAccountDto> bankAccount = bankAccountService.getAllByIdUser();
+        model.addAttribute("bankAccount", bankAccount);
+        return "profileBankAccount";
+    }
+
+    @GetMapping("/profileSettings")
+    public String profileSetting(Model model) {
+        PasswordDto passwordDto = new PasswordDto();
+        model.addAttribute("passwordDto", passwordDto);
+        User user = userService.getUser();
+        model.addAttribute("user", user);
+        List<BankAccountDto> bankAccount = bankAccountService.getAllByIdUser();
+        model.addAttribute("bankAccount", bankAccount);
+        return "profileSettings";
     }
 
     @PostMapping("/createUser")
@@ -83,20 +136,24 @@ public class UserController {
 
     @PostMapping("/updatePassword")
     public String updatePassword(@Valid @ModelAttribute PasswordDto passwordDto, BindingResult result, Model model) {
-//        if (!result.hasErrors()) {
-//            try {
-        userService.updatePassword(passwordDto);
-        return "redirect:/profile";
-//            } catch (UserNotFoundException e) {
-//                ObjectError errorPassword = new ObjectError("passwordDto", e.getMessage());
-//                result.addError(errorPassword);
-//                model.addAttribute("passwordDto", passwordDto);
-//                return "profile";
-//            }
-//        }
-//        model.addAttribute("passwordDto", passwordDto);
-//        return "profile";
+        if (!result.hasErrors()) {
+            try {
+                userService.updatePassword(passwordDto);
+                return "redirect:/profileSettings";
+            } catch (UserNotFoundException e) {
+                ObjectError objectError = new ObjectError("objectError", e.getMessage());
+                result.addError(objectError);
+                User user = userService.getUser();
+                model.addAttribute("user", user);
+                List<BankAccountDto> bankAccount = bankAccountService.getAllByIdUser();
+                model.addAttribute("bankAccount", bankAccount);
+//                return "profileSettings";
+            }
+        }
+        User user = userService.getUser();
+        model.addAttribute("user", user);
+        List<BankAccountDto> bankAccount = bankAccountService.getAllByIdUser();
+        model.addAttribute("bankAccount", bankAccount);
+        return "profileSettings";
     }
-
-
 }
