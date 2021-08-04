@@ -7,6 +7,8 @@ import com.paymybuddy.api.model.dto.TransactionDto;
 import com.paymybuddy.api.service.ConnectionService;
 import com.paymybuddy.api.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,6 +16,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -26,18 +29,29 @@ public class TransactionController {
     @Autowired
     ConnectionService connectionService;
 
+    int page = 0;
+    int size = 4;
+
     @GetMapping("/transactions")
-    public String transaction(Model model) {
-        List<Transaction> transactionList = transactionService.getAllTransactions();
+    public String transaction(Model model, @RequestParam(name= "page", defaultValue = "0") int page, Pageable pageable) {
+        if(pageable.getPageNumber()>=1) {
+            int previousPage = pageable.getPageNumber()-1;
+            String previousPageUrl = "/transactions?page="+previousPage;
+            model.addAttribute("previousPageUrl", previousPageUrl);
+        }
+        int nextPage = pageable.getPageNumber()+1;
+        String nextPageUrl = "/transactions?page="+nextPage;
+        model.addAttribute("nextPageUrl", nextPageUrl);
+        List<Transaction> transactionList = transactionService.getAllTransactions(PageRequest.of(page, size));
         model.addAttribute("transactions", transactionList);
-        List<Connection> connections = connectionService.getConnections();
+        List<Connection> connections = connectionService.getConnections(pageable);
         model.addAttribute("connections", connections);
         model.addAttribute("transactionDto", new TransactionDto());
         return "transaction";
     }
 
     @PostMapping("/createTransaction")
-    public String createTransaction(@Valid @ModelAttribute TransactionDto transactionDto, BindingResult result, Model model) {
+    public String createTransaction(@Valid @ModelAttribute TransactionDto transactionDto, BindingResult result, Model model, Pageable pageable) {
 
         if (!result.hasErrors()) {
             try {
@@ -49,9 +63,9 @@ public class TransactionController {
             }
         }
 
-        List<Transaction> transactionList = transactionService.getAllTransactions();
+        List<Transaction> transactionList = transactionService.getAllTransactions(PageRequest.of(page, size));
         model.addAttribute("transactions", transactionList);
-        List<Connection> connections = connectionService.getConnections();
+        List<Connection> connections = connectionService.getConnections(pageable);
         model.addAttribute("connections", connections);
         model.addAttribute("transactionDto", transactionDto);
 
@@ -60,10 +74,10 @@ public class TransactionController {
 
 
     @GetMapping("/createTransaction")
-    public String createTransaction(Model model) {
-        List<Transaction> transactionList = transactionService.getAllTransactions();
+    public String createTransaction(Model model, Pageable pageable) {
+        List<Transaction> transactionList = transactionService.getAllTransactions(PageRequest.of(page, size));
         model.addAttribute("transactions", transactionList);
-        List<Connection> connections = connectionService.getConnections();
+        List<Connection> connections = connectionService.getConnections(pageable);
         model.addAttribute("connection", connections);
         TransactionDto transactionDto = new TransactionDto();
         model.addAttribute("transactionDto", transactionDto);

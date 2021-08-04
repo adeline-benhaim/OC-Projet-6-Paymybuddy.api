@@ -89,7 +89,7 @@ class BankAccountServiceImplTest {
         bankAccountService.getAllByIdUser();
 
         //THEN
-        Mockito.verify(bankAccountRepository, Mockito.times(1)).findByIdUser(idCurrentUser);
+        Mockito.verify(bankAccountRepository, Mockito.times(1)).findByIdUserOrderByAccountIdDesc(idCurrentUser);
 
     }
 

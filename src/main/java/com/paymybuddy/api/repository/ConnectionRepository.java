@@ -1,6 +1,7 @@
 package com.paymybuddy.api.repository;
 
 import com.paymybuddy.api.model.Connection;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -17,8 +18,7 @@ public interface ConnectionRepository extends CrudRepository<Connection, Integer
      * @param idUser of connections sought
      * @return a list of connections belong to user with id informed
      */
-    @Query("FROM Connection t WHERE t.idUser = ?1 ORDER BY t.connectionId DESC")
-    List<Connection> findByIdUser(int idUser);
+    List<Connection> findByIdUserOrderByConnectionIdDesc(int idUser, Pageable pageable);
 
     /**
      * Find a connection by id user and email user connected

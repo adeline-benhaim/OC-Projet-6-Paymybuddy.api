@@ -14,6 +14,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
         http.authorizeRequests()
                 .antMatchers("/", "/createUser").permitAll()
                 .antMatchers("/css/**", "/js/**", "/images/**").permitAll()
@@ -25,11 +26,13 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .usernameParameter("email")
                 .permitAll()
                 .and()
-                .logout()
-                .permitAll()
-                .and()
-                .rememberMe()
-                .userDetailsService(this.userDetailsService());
+                .logout();
+//                .and()
+//                .rememberMe()
+//                .userDetailsService(customUserDetailsService);
+//                .and()
+//                .oauth2Login()
+//                .loginPage("/login/oauth2");
     }
 
     @Bean

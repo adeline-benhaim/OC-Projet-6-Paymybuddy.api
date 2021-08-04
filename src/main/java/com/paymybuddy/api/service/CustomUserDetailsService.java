@@ -17,12 +17,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collections;
 
-@Service
+@Service("userDetailsService")
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
-
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

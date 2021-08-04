@@ -10,6 +10,7 @@ import com.paymybuddy.api.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,10 +64,10 @@ public class ConnectionServiceImpl implements ConnectionService {
         String currentUserEmail = currentUser.getEmail();
         if (currentUserEmail.equals(connection.getEmailOfUserLinked())) {
             logger.error("Unable to create connection with the current user email");
-            throw new UserNotFoundException("Unable to create connection with the current user email");
+            throw new UserNotFoundException("Unable to create connection with your own email");
         } else if (!isExistingUser(connection.getEmailOfUserLinked())) {
             logger.error("Unable to create connection because email doesn't exist in database");
-            throw new UserNotFoundException("Unable to create this connection because email : " + connection.getEmailOfUserLinked() + " doesn't exist in database");
+            throw new UserNotFoundException("Unable to create this connection because email : " + connection.getEmailOfUserLinked() + " doesn't exist");
         } else if (!isUserLinked(connection.getEmailOfUserLinked())) {
             logger.info("New connection created");
             Connection newConnection = Connection.builder()
@@ -87,9 +88,9 @@ public class ConnectionServiceImpl implements ConnectionService {
      * @return a list of connections belonging to current user with name and email of users linked
      */
     @Override
-    public List<Connection> getConnections() {
+    public List<Connection> getConnections(Pageable pageable) {
         logger.info("Get a list of connections");
-        return connectionRepository.findByIdUser(getIdCurrentUser());
+        return connectionRepository.findByIdUserOrderByConnectionIdDesc(getIdCurrentUser(), pageable);
     }
 
     /**

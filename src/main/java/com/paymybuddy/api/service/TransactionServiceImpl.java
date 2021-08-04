@@ -14,6 +14,9 @@ import com.paymybuddy.api.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,9 +44,9 @@ public class TransactionServiceImpl implements TransactionService {
      * @return a list of transactions issued and received belong to current user
      */
     @Override
-    public List<Transaction> getAllTransactions() {
+    public List<Transaction> getAllTransactions(Pageable pageable) {
         logger.info("Get a list of all transactions");
-        return transactionRepository.findByIdTransmitterOrIdBeneficiaryOrderByDateDesc(getIdCurrentUser(), getIdCurrentUser())
+        return transactionRepository.findByIdTransmitterOrIdBeneficiaryOrderByDateDesc(getIdCurrentUser(), getIdCurrentUser(), pageable)
                 .stream()
                 .peek(transaction -> {
                     if (transaction.getIdTransmitter() == getIdCurrentUser()) {

@@ -1,8 +1,6 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhml"
+<html xmlns="http://www.w3.org/1999/xhml" html lang="en"
       xmlns:th="http://www.thymeleaf.org">
-<html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -34,6 +32,7 @@
         <img alt="Brand" src="css/logo.JPG">
     </div>
     <form class="form-signin" method="post" th:action="@{/login}">
+        <!--<form class="form-signin" method="post" action="login"> -->
         <div class="row formMargin">
             <div th:if="${param.failure}">
                 <p class="alert alert-danger">Invalid username or password</p>
@@ -62,6 +61,8 @@
             <button type="submit" class="btn btn-primary">Login</button>
         </div>
     </form>
+<!--    <a class="btn btn-block btn-social btn-google" href="/oauth2/authorization/google"><span-->
+<!--            class="fab fa-google"></span> Sign in with Google</a>-->
 </div>
 </body>
 </html>

@@ -29,7 +29,7 @@ public interface BankAccountService {
      * @param accountId of the requested bank account
      * @return bank account
      */
-    Optional<BankAccount> getBankAccount(int accountId);
+    BankAccount getBankAccount(int accountId);
 
     /**
      * Update a bank account belonging to current user

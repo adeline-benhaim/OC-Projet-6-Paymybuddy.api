@@ -58,7 +58,7 @@ public class BankAccountController {
 
     @GetMapping("/updateBankAccount/{accountId}")
     public String updateBankAccount(@PathVariable("accountId") int accountId, Model model, RedirectAttributes attr) {
-        Optional<BankAccount> updateBankAccount = bankAccountService.getBankAccount(accountId);
+        BankAccount updateBankAccount = bankAccountService.getBankAccount(accountId);
         model.addAttribute("bankAccount", updateBankAccount);
         attr.addFlashAttribute("message","New bankAccount saved !");
         attr.addAttribute("mess", "saved");
