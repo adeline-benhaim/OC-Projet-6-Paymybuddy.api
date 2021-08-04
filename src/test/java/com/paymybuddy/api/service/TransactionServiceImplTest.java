@@ -18,6 +18,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -64,12 +66,13 @@ class TransactionServiceImplTest {
 
         //GIVEN
         int idCurrentUser = 1;
+        Pageable firstPageWithFourElements = PageRequest.of(0, 4);
 
         //WHEN
-        transactionService.getAllTransactions();
+        transactionService.getAllTransactions(PageRequest.of(0, 4));
 
         //THEN
-        Mockito.verify(transactionRepository, Mockito.times(1)).findByIdTransmitterOrIdBeneficiaryOrderByDateDesc(idCurrentUser, idCurrentUser);
+        Mockito.verify(transactionRepository, Mockito.times(1)).findByIdTransmitterOrIdBeneficiaryOrderByDateDesc(idCurrentUser, idCurrentUser, firstPageWithFourElements);
     }
 
     @Test

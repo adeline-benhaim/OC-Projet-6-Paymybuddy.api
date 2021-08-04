@@ -16,8 +16,7 @@ public interface BankAccountRepository extends CrudRepository<BankAccount, Integ
      * @param idUser id of the user whose bank accounts are sought
      * @return list of bank account belonging to user found by id
      */
-    @Query("FROM BankAccount t WHERE t.idUser = ?1 ORDER BY t.accountId DESC")
-    List<BankAccount> findByIdUser(int idUser);
+    List<BankAccount> findByIdUserOrderByAccountIdDesc(int idUser);
 
     /**
      * Check if a bank account exist with an id user and a bank account name

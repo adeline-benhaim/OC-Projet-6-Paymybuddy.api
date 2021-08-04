@@ -1,6 +1,7 @@
 package com.paymybuddy.api.service;
 
 import com.paymybuddy.api.model.Connection;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface ConnectionService {
      *
      * @return a list of connections belong to current user with name and email of users connected
      */
-    List<Connection> getConnections();
+    List<Connection> getConnections(Pageable pageable);
 
     /**
      * Delete a connection belong to current user

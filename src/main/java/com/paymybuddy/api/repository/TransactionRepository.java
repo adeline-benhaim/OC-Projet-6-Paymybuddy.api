@@ -1,11 +1,10 @@
 package com.paymybuddy.api.repository;
 
 import com.paymybuddy.api.model.Transaction;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface TransactionRepository extends CrudRepository<Transaction, Integer> {
@@ -16,7 +15,6 @@ public interface TransactionRepository extends CrudRepository<Transaction, Integ
      * @param idBeneficiary id of the beneficiary user of the transaction
      * @return a list with all transactions by transmitter user and beneficiary user
      */
-//    @Query("FROM Transaction t WHERE t.idTransmitter = ?1 OR t.idBeneficiary = ?2 ORDER BY t.date DESC")
-    List<Transaction> findByIdTransmitterOrIdBeneficiaryOrderByDateDesc(int idTransmitter, int idBeneficiary);
+    Page<Transaction> findByIdTransmitterOrIdBeneficiaryOrderByDateDesc(int idTransmitter, int idBeneficiary, Pageable pageable);
 
 }

@@ -9,8 +9,6 @@ import com.paymybuddy.api.service.BankAccountService;
 import com.paymybuddy.api.service.CustomUserDetailsService;
 import com.paymybuddy.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -35,6 +33,10 @@ public class UserController {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+    @GetMapping("/contact")
+    public String contact() {
+        return "formContact";
+    }
 
     @GetMapping("/home")
     public String home(Model model) {
@@ -45,18 +47,7 @@ public class UserController {
 
     @GetMapping("/login")
     public String loginPage(Model model) {
-        User user = userService.getUser();
-        model.addAttribute("user", user);
         return "login";
-    }
-
-    @PostMapping("/login")
-    public String login(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication == null){
-            return "login";
-        }
-        return "home";
     }
 
     @GetMapping("/")
@@ -104,7 +95,7 @@ public class UserController {
     }
 
     @PostMapping("/createUser")
-    public String createUser(@Valid @ModelAttribute User user, BindingResult result, Model model) {
+    public String createUser(@Valid @ModelAttribute User user, BindingResult result, Model model, HttpServletRequest httpServletRequest) {
 
         if (!result.hasErrors()) {
             try {
@@ -147,7 +138,6 @@ public class UserController {
                 model.addAttribute("user", user);
                 List<BankAccountDto> bankAccount = bankAccountService.getAllByIdUser();
                 model.addAttribute("bankAccount", bankAccount);
-//                return "profileSettings";
             }
         }
         User user = userService.getUser();

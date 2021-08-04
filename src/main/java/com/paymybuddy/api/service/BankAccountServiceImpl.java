@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.paymybuddy.api.service.SecurityUtils.getIdCurrentUser;
@@ -54,7 +53,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     @Override
     public List<BankAccountDto> getAllByIdUser() {
         logger.info("Get a list of bank accounts");
-        List<BankAccount> bankAccountList = bankAccountRepository.findByIdUser(getIdCurrentUser());
+        List<BankAccount> bankAccountList = bankAccountRepository.findByIdUserOrderByAccountIdDesc(getIdCurrentUser());
         return bankAccountList
                 .stream()
                 .map(MapperDto::convertToBankAccountDto)
@@ -67,9 +66,9 @@ public class BankAccountServiceImpl implements BankAccountService {
      * @param accountId of the requested bank account
      * @return bank account
      */
-    public Optional<BankAccount> getBankAccount(int accountId) {
+    public BankAccount getBankAccount(int accountId) {
         logger.info("Get a bank account by ID account");
-        return bankAccountRepository.findById(accountId);
+        return bankAccountRepository.findByAccountId(accountId);
     }
 
     /**
