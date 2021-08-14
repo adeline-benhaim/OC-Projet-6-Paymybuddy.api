@@ -193,7 +193,7 @@ class UserServiceImplTest {
         Mockito.when(authentication.getName()).thenReturn("1");
         int idCurrentUser = 1;
         String password = "password";
-        Mockito.when(userRepository.existsByUserIdAndPassword(idCurrentUser, password)).thenReturn(false);
+        Mockito.when(userRepository.existsByUserIdAndPassword(idCurrentUser, passwordEncoder.encode(password))).thenReturn(false);
 
         //THEN
         assertThrows(UserNotFoundException.class, () -> userService.deleteCurrentUserByPassword(password));
@@ -211,7 +211,7 @@ class UserServiceImplTest {
         Mockito.when(authentication.getName()).thenReturn("1");
         int idCurrentUser = 1;
         String password = "password";
-        Mockito.when(userRepository.existsByUserIdAndPassword(idCurrentUser, password)).thenReturn(true);
+        Mockito.when(userRepository.existsByUserIdAndPassword(idCurrentUser, passwordEncoder.encode(password))).thenReturn(true);
 
         //WHEN
         userService.deleteCurrentUserByPassword(password);

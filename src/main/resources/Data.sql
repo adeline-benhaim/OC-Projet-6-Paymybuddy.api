@@ -72,12 +72,18 @@ CREATE TABLE transfer (
 DROP TABLE IF EXISTS commission;
 CREATE TABLE commission (
                 commission_id INT AUTO_INCREMENT NOT NULL,
-                id_transmitter INT NOT NULL,
-                id_beneficiary INT NOT NULL,
+                id_transaction INT NOT NULL,
                 Amount DECIMAL(4,2) NOT NULL,
                 date DATETIME NOT NULL,
                 PRIMARY KEY (commission_id)
 );
+
+CREATE TABLE persistent_logins (
+username varchar(64) NOT null,
+series varchar(64) primary key,
+token varchar(64) not null,
+last_used timestamp not null)
+;
 
 
 ALTER TABLE bank_account ADD CONSTRAINT user_bank_account_fk
@@ -123,11 +129,14 @@ ON DELETE NO ACTION
 ON UPDATE CASCADE;
 
  INSERT INTO user
-    (email, password, first_name, last_name, balance, address, zip, city, phone)
+    (email, password, first_name, last_name, balance, address, zip, city, phone, role)
 VALUES
-    ('email1@test.com', '$2y$10$jKXgiFax82q3LAIXe/WnzOIiYVDfIRbovxVxd72OTyxEd9hnJDZnS', 'Paul', 'Dupond', 150, 'address1', 10000, 'city1', 0100000000),
-    ('email2@test.com', '$2y$10$6NwH2qVECHhOO20fOMbWZe6/TWcgSJo/Rk8zKUj4EkAeHcDrVWDqW', 'Pierre', 'Dupond', 500, 'address2', 20000, 'city2', 0200000000),
-    ('email3@test.com', '$2y$10$bg86xhmlvqE3NhkQWxP/ZO74EnDkhIwFVrIUiGSdqciRModBimceS', 'Jacques', 'Dupond', 0, 'address3', 30000, 'city3', 0300000000)
+    ('email1@test.com', '$2y$10$jKXgiFax82q3LAIXe/WnzOIiYVDfIRbovxVxd72OTyxEd9hnJDZnS', 'Paul', 'Dupond', 150, 'address1', 10000, 'city1', 0100000000, 'USER'),
+    ('email2@test.com', '$2y$10$6NwH2qVECHhOO20fOMbWZe6/TWcgSJo/Rk8zKUj4EkAeHcDrVWDqW', 'Pierre', 'Dupond', 500, 'address2', 20000, 'city2', 0200000000, 'USER'),
+    ('email3@test.com', '$2y$10$bg86xhmlvqE3NhkQWxP/ZO74EnDkhIwFVrIUiGSdqciRModBimceS', 'Jacques', 'Dupond', 0, 'address3', 30000, 'city3', 0300000000, 'USER'),
+	('email4@test.com', '$2a$10$B9/Z6yWuXJLSAP1aCbzeaOCP3sFwQpLmY21rx7TqVAqDU4JAAhQaW', 'Mike', 'Martin', 115, 'address4', 40000, 'city4', 0400000000, 'ADMIN'),
+    ('email5@test.com', '$2a$10$rFA1ptFvOKI.d4fshy4WFuTLuPeWLgSLlLQJSiRG7i49ilUj8k5Ne', 'Marc', 'Doe', 0, 'address5', 50000, 'city5', 0500000000, 'USER'),
+    ('email6@test.com', '$2a$10$wNOmMSKL8HFDN9bFn111uOkdxlX3IoZwLzJAQcBZKdKeCocADo8Cm', 'Mathieu', 'Doe', 0, 'address6', 60000, 'city6', 0600000000, 'USER')
 ;
 -- default password = 12345678
 
@@ -145,28 +154,34 @@ VALUES
 (1, 'email2@test.com', 'Pierre.D'),
 (2, 'email3@test.com', 'Jacques.D'),
 (1,'email3@test.com', 'Jacques.D'),
+(1, 'email4@test.com', 'Mike.M'),
 (2,'email1@test.com', 'Paul.D')
 ;
 
 INSERT INTO transfer
 (id_bank_account, id_user, amount, transfer_type, date, success)
 VALUES
-('1', '1', '50', 'debit', '2021-01-01', '1'),
+('1', '1', '50', 'debit', '2021-04-02', '1'),
 ('2', '1', '50', 'credit', '2021-01-01', '1')
 ;
 
 INSERT INTO transaction
 (id_connection, id_transmitter, id_beneficiary, connection_name, description, amount, date, success)
 VALUES
-('1', '1', '2', 'test transaction 1', 'Restaurant refund', '50', '2021-01-01', '1'),
-('2', '2', '3', 'test transaction 2', 'Cinema refund', '25', '2021-01-01', '1'),
-('4', '2', '1', 'test transaction 3', 'Birthday present', '15', '2021-01-01', '1')
+('1', '1', '2', 'Pierre.D', 'Restaurant refund', '50', '2021-01-01', '1'),
+('1', '1', '3', 'Jacques.D', 'Cinema refund', '20', '2021-08-08', '1'),
+('1', '1', '4', 'Mike.M', 'Birthday present', '75', '2021-07-01', '1'),
+('1', '1', '4', 'Mike.M', 'Household shopping', '30', '2021-08-08', '1'),
+('2', '2', '3', 'Jacques.D', 'Cinema refund', '25', '2021-01-01', '1'),
+('4', '2', '1', 'Paul.D', 'Birthday present', '15', '2021-01-01', '1')
 ;
 
 INSERT INTO commission
-(id_transmitter, id_beneficiary, amount, date)
+(id_transaction, amount, date)
 VALUES
-('1', '2', '2.5', '2021-01-01'),
-('2', '3', '1.25', '2021-01-01'),
-('2', '1', '0.75', '2021-01-01')
+('1', '2.5', '2021-01-01'),
+('1', '1', '2021-08-08'),
+('1', '3.75', '2021-07-01'),
+('2', '1.25', '2021-01-01'),
+('3', '0.75', '2021-01-01')
 ;

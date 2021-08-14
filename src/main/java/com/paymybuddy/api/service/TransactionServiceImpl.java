@@ -38,6 +38,11 @@ public class TransactionServiceImpl implements TransactionService {
     @Autowired
     CommissionRepository commissionRepository;
 
+    @Override
+    public long getTotalElementPageable(Pageable pageable) {
+        return transactionRepository.findByIdTransmitterOrIdBeneficiaryOrderByDateDesc(getIdCurrentUser(), getIdCurrentUser(), pageable).getTotalElements();
+    }
+
     /**
      * Get a list of transactions issued and received belong to current user
      *
@@ -96,16 +101,14 @@ public class TransactionServiceImpl implements TransactionService {
         double balanceUserBeneficiaryUpdated = balanceUserBeneficiary + transactionDto.getAmount();
         currentUser.setBalance(balanceCurrentUserUpdated);
         userBeneficiary.setBalance(balanceUserBeneficiaryUpdated);
+        logger.info("New transaction created");
+        Transaction transaction = transactionRepository.save(newTransaction);
         Commission newCommission = Commission.builder()
-                .idTransmitter(currentUser.getUserId())
-                .idBeneficiary(userBeneficiary.getUserId())
+                .idTransaction(newTransaction.getTransactionId())
                 .amount(commission)
                 .date(newTransaction.getDate())
                 .build();
         commissionRepository.save(newCommission);
-        logger.info("New transaction created");
-        return transactionRepository.save(newTransaction);
+        return transaction;
     }
-
-
 }

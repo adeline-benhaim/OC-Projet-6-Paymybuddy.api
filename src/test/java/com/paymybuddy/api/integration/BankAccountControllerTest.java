@@ -1,5 +1,6 @@
 package com.paymybuddy.api.integration;
 
+import com.paymybuddy.api.model.BankAccount;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +11,13 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @WithMockUser(username = "1", password = "12345678", roles = "USER")
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 public class BankAccountControllerTest {
 
     @Autowired
@@ -64,33 +66,42 @@ public class BankAccountControllerTest {
                 .andExpect(view().name("profileBankAccount"));
     }
 
-//    @Test
-//    @DisplayName("POST request (/saveBankAccount) must save new bank account")
-//    public void postNewBankAccountTest() throws Exception {
-//
-//        //GIVEN
-//        BankAccount bankAccount = BankAccount.builder()
-//                .name("NewBankAccount")
-//                .bic("11111")
-//                .iban("22222")
-//                .build();
-//
-//
-//        RequestBuilder request = post("/formNewBankAccount.html")
-//                .param("name", bankAccount.getName())
-//                .param("bic", bankAccount.getBic())
-//                .param("iban",bankAccount.getIban());
-//
-//        mockMvc.perform(post("/saveBankAccount")
-//                .content(asJsonString(bankAccount))
-//                .contentType("application/json"))
-//                .andDo(print()).andExpect(status().isOk());
-//
-//        mockMvc
-//                .perform(request)
-//                .andDo(MockMvcResultHandlers.print())
-//                .andExpect(status().isOk())
-//                .andExpect(redirectedUrl("/profileBankAccount"));
-//
-//    }
+    @Test
+    @DisplayName("POST request (/saveBankAccount) must save new bank account")
+    public void postNewBankAccountTest() throws Exception {
+
+        BankAccount bankAccount = BankAccount.builder()
+                .name("NewBankAccount")
+                .bic("11111")
+                .iban("22222")
+                .build();
+
+        mockMvc.perform(post("/saveBankAccount")
+                .param("name", bankAccount.getName())
+                .param("bic", bankAccount.getBic())
+                .param("iban", bankAccount.getIban()))
+                .andDo(print())
+                .andExpect(view().name("redirect:/profileBankAccount"))
+                .andExpect(status().is3xxRedirection())
+                .andReturn().getResponse().containsHeader("NewBankAccount");
+    }
+
+    @Test
+    @DisplayName("POST request (/saveBankAccount) with already bank account name return BankAccountException")
+    public void postNewBankAccountWithExceptionTest() throws Exception {
+
+        BankAccount bankAccount = BankAccount.builder()
+                .name("Societe Generale")
+                .bic("11111")
+                .iban("22222")
+                .build();
+
+        mockMvc.perform(post("/saveBankAccount")
+                .param("name", bankAccount.getName())
+                .param("bic", bankAccount.getBic())
+                .param("iban", bankAccount.getIban()))
+                .andDo(print())
+                .andExpect(model().attributeExists("bankAccount"))
+                .andExpect(view().name("formNewBankAccount"));
+    }
 }

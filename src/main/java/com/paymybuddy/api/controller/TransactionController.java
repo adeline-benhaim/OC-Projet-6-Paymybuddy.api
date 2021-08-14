@@ -34,16 +34,26 @@ public class TransactionController {
 
     @GetMapping("/transactions")
     public String transaction(Model model, @RequestParam(name= "page", defaultValue = "0") int page, Pageable pageable) {
-        if(pageable.getPageNumber()>=1) {
-            int previousPage = pageable.getPageNumber()-1;
-            String previousPageUrl = "/transactions?page="+previousPage;
-            model.addAttribute("previousPageUrl", previousPageUrl);
-        }
-        int nextPage = pageable.getPageNumber()+1;
-        String nextPageUrl = "/transactions?page="+nextPage;
-        model.addAttribute("nextPageUrl", nextPageUrl);
         List<Transaction> transactionList = transactionService.getAllTransactions(PageRequest.of(page, size));
         model.addAttribute("transactions", transactionList);
+        int actualPageNumber = pageable.getPageNumber();
+        model.addAttribute("intActualPage", actualPageNumber);
+        String actualPageUrl = "/transactions?page=" + actualPageNumber;
+        model.addAttribute("actualPageUrl", actualPageUrl);
+
+        if(pageable.getPageNumber()>=1) {
+            int previousPage = pageable.getPageNumber()-1;
+            String previousPageUrl = "/transactions?page="+ previousPage;
+            model.addAttribute("previousPageUrl", previousPageUrl);
+            model.addAttribute("intPreviousPage", previousPage);
+        }
+        if(transactionService.getTotalElementPageable(pageable)>(pageable.getPageNumber()+1) * 4L) {
+            int nextPage = pageable.getPageNumber()+1;
+            model.addAttribute("intNextPage", nextPage);
+            String nextPageUrl = "/transactions?page=" + nextPage;
+            model.addAttribute("nextPageUrl", nextPageUrl);
+
+        }
         List<Connection> connections = connectionService.getConnections(pageable);
         model.addAttribute("connections", connections);
         model.addAttribute("transactionDto", new TransactionDto());
@@ -62,13 +72,11 @@ public class TransactionController {
                 result.addError(objectError);
             }
         }
-
         List<Transaction> transactionList = transactionService.getAllTransactions(PageRequest.of(page, size));
         model.addAttribute("transactions", transactionList);
         List<Connection> connections = connectionService.getConnections(pageable);
         model.addAttribute("connections", connections);
         model.addAttribute("transactionDto", transactionDto);
-
         return "transaction";
     }
 

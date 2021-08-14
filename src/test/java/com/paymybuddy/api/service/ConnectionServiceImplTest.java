@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -122,9 +123,10 @@ public class ConnectionServiceImplTest {
 
     @Test
     @DisplayName("Get a list of connections belong to current user")
-    void getConnectionsTest(Pageable pageable) {
+    void getConnectionsTest() {
 
         //GIVEN
+        Pageable pageable = PageRequest.of(0, 4);
         List<Connection> connectionList = dataSourceTest.getConnectionListMocked();
         when(connectionRepository.findByIdUserOrderByConnectionIdDesc(idCurrentUser, pageable)).thenReturn(connectionList);
 

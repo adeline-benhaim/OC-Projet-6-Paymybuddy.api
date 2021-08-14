@@ -15,5 +15,7 @@ public class SecurityUtils {
         return 0;
     }
 
-    //isUserConnected
+    public static boolean isUserConnected() {
+        return getIdCurrentUser() != 0;
+    }
 }

@@ -17,11 +17,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
+
+import static com.paymybuddy.api.service.SecurityUtils.getIdCurrentUser;
+import static com.paymybuddy.api.service.SecurityUtils.isUserConnected;
 
 @Controller
 public class UserController {
@@ -41,18 +45,24 @@ public class UserController {
     @GetMapping("/home")
     public String home(Model model) {
         User user = userService.getUser();
+        if(user.getRole().equals("ADMIN")) {
+            model.addAttribute("user", user);
+            return "redirect:/homeAdmin";
+        }
         model.addAttribute("user", user);
         return "home";
     }
 
     @GetMapping("/login")
     public String loginPage(Model model) {
+        if (isUserConnected()) return "redirect:/home";
         return "login";
     }
 
     @GetMapping("/")
-    public String homePage(Model model) {
-        return "homePage";
+    public ModelAndView homePage() {
+        if (isUserConnected()) return new ModelAndView("redirect:/home");
+        return new ModelAndView("homePage");
     }
 
     @GetMapping("/logout")
@@ -95,12 +105,13 @@ public class UserController {
     }
 
     @PostMapping("/createUser")
-    public String createUser(@Valid @ModelAttribute User user, BindingResult result, Model model, HttpServletRequest httpServletRequest) {
+    public String createUser(@Valid @ModelAttribute User user, BindingResult result, Model model, HttpServletRequest request) {
 
         if (!result.hasErrors()) {
             try {
                 userService.createUser(user);
-                return "redirect:/home";
+//                customUserDetailsService.authWithHttpServletRequest(request, user.getEmail(), user.getPassword());
+                return "home";
             } catch (UserAlreadyExistException e) {
                 ObjectError errorEmail = new ObjectError("email", e.getMessage());
                 result.addError(errorEmail);

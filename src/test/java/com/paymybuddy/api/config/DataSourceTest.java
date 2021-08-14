@@ -2,6 +2,7 @@ package com.paymybuddy.api.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paymybuddy.api.model.*;
+import com.paymybuddy.api.model.dto.UserDto;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,11 +86,4 @@ public class DataSourceTest {
         bankAccountListMocked.addAll(Arrays.asList(bankAccount1, bankAccount2, bankAccount3));
     }
 
-    public static String asJsonString(final Object obj) {
-        try {
-            return new ObjectMapper().writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

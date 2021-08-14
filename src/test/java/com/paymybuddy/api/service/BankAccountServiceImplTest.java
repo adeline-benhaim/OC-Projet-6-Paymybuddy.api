@@ -104,7 +104,7 @@ class BankAccountServiceImplTest {
         bankAccountService.getBankAccount(accountId);
 
         //THEN
-        Mockito.verify(bankAccountRepository, Mockito.times(1)).findById(accountId);
+        Mockito.verify(bankAccountRepository, Mockito.times(1)).findByAccountId(accountId);
 
     }
 
