@@ -1,6 +1,7 @@
 package com.paymybuddy.api.service;
 
 import com.paymybuddy.api.model.Transfer;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 

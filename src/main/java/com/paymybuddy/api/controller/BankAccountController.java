@@ -66,9 +66,8 @@ public class BankAccountController {
     }
 
     @PostMapping("/updateBankAccount")
-    public ModelAndView updateBankAccount(int accountId, @ModelAttribute BankAccount bankAccount, Model model) {
+    public ModelAndView updateBankAccount(int accountId, @ModelAttribute BankAccount bankAccount) {
         bankAccountService.updateBankAccount(accountId, bankAccount);
-        model.addAttribute("message");
         return new ModelAndView("redirect:/profileBankAccount");
     }
 

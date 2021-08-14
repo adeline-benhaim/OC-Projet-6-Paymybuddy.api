@@ -22,10 +22,10 @@ public class ConnectionControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("GET request (/connection) must return a list of connections by user id")
+    @DisplayName("GET request (/connections) must return a list of connections by user id")
     public void getConnectionListTest() throws Exception {
 
-        mockMvc.perform(get("/connection"))
+        mockMvc.perform(get("/connections"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(view().name("connection"))

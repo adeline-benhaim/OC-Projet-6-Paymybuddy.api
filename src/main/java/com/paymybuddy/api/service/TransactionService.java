@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface TransactionService {
 
+    long getTotalElementPageable(Pageable pageable);
+
     /**
      * Get a list of transactions issued and received belong to current user
      *

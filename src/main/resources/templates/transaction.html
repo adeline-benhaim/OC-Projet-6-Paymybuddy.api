@@ -20,7 +20,8 @@
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"
-            integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+            integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd"
+            crossorigin="anonymous"></script>
 
     <title>Pay my buddy web application</title>
 
@@ -57,8 +58,8 @@
             <h2 class="h2">Send money</h2>
         </div>
         <div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-            <a href="/connections" >
-            <button type="submit" class="btn btn-primary pull-right">Add Connection</button>
+            <a href="/connections">
+                <button type="submit" class="btn btn-primary pull-right">Add Connection</button>
             </a>
         </div>
     </div>
@@ -66,9 +67,9 @@
     <div class="pay">
 
         <form method="post"
-               th:action="@{/createTransaction}" th:object="${transactionDto}">
+              th:action="@{/createTransaction}" th:object="${transactionDto}">
 
-            <div class="alert alert-danger" th:if="${#fields.hasErrors('global')}" >
+            <div class="alert alert-danger" th:if="${#fields.hasErrors('global')}">
                 <p th:errors="*{global}"></p>
             </div>
 
@@ -94,7 +95,8 @@
                 <div class="col-md-3">
                     <div class="input-group">
                         <span class="input-group-addon">€</span>
-                        <input type="text" th:field="*{amount}" class="form-control" aria-label="Amount (to the nearest euro)">
+                        <input type="text" th:field="*{amount}" class="form-control"
+                               aria-label="Amount (to the nearest euro)">
                         <span class="input-group-addon">.00</span>
                     </div>
                     <p th:if="${#fields.hasErrors('amount')}" class="label label-danger" th:errors="*{amount}"></p>
@@ -124,7 +126,7 @@
             <tr th:if="${transactions.empty}">
                 <td colspan="3">No transaction yet</td>
             </tr>
-            <tr th:each="transaction: ${transactions}" >
+            <tr th:each="transaction: ${transactions}">
                 <td><span th:text="${transaction.connectionName}"> Connections </span></td>
                 <td><span th:text="${transaction.description}"> Description </span></td>
                 <td><span th:text="${transaction.amount}"></span></td>
@@ -135,25 +137,23 @@
 </div>
 
 <div class="container">
-    <nav aria-label="Page navigation">
-        <ul class="pagination">
-            <li>
-                <a th:href="${previousPageUrl}" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            <li><a href="/transactions?page=0">1</a></li>
-            <li><a href="/transactions?page=1">2</a></li>
-            <li><a href="/transactions?page=2">3</a></li>
-            <li><a href="/transactions?page=3">4</a></li>
-            <li><a href="/transactions?page=4">5</a></li>
-            <li>
-                <a th:href="${nextPageUrl}" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li th:if="${previousPageUrl}">
+                    <a th:href="${previousPageUrl}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li th:if="${previousPageUrl}"><a th:text="${intPreviousPage}+1" th:href="${previousPageUrl}"></a></li>
+                <li><a th:text="${intActualPage}+1" th:href="${actualPageUrl}"></a></li>
+                <li th:if="${nextPageUrl}"><a th:text="${intNextPage}+1" th:href="${nextPageUrl}"></a></li>
+                <li th:if="${nextPageUrl}">
+                    <a th:href="${nextPageUrl}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
 </div>
 
 </body>
