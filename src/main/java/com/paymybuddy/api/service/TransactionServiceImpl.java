@@ -14,9 +14,9 @@ import com.paymybuddy.api.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,18 +30,13 @@ public class TransactionServiceImpl implements TransactionService {
     private static final Logger logger = LoggerFactory.getLogger(TransactionServiceImpl.class);
 
     @Autowired
-    TransactionRepository transactionRepository;
+    private TransactionRepository transactionRepository;
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    ConnectionRepository connectionRepository;
+    private ConnectionRepository connectionRepository;
     @Autowired
-    CommissionRepository commissionRepository;
-
-    @Override
-    public long getTotalElementPageable(Pageable pageable) {
-        return transactionRepository.findByIdTransmitterOrIdBeneficiaryOrderByDateDesc(getIdCurrentUser(), getIdCurrentUser(), pageable).getTotalElements();
-    }
+    private CommissionRepository commissionRepository;
 
     /**
      * Get a list of transactions issued and received belong to current user
@@ -59,6 +54,26 @@ public class TransactionServiceImpl implements TransactionService {
                     }
                 })
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Get a pair with a list of transactions and a long number
+     *
+     * @param pageable the result list
+     * @return a pair with a list of transactions issued and received belong to current user and the total of elements of this list
+     */
+    @Override
+    public Pair<List<Transaction>, Long> getTransactions(Pageable pageable) {
+        logger.info("Get a list of all transactions");
+        Page<Transaction> transactionPage = transactionRepository.findByIdTransmitterOrIdBeneficiaryOrderByDateDesc(getIdCurrentUser(), getIdCurrentUser(), pageable);
+        List<Transaction> transactions = transactionPage.stream()
+                .peek(transaction -> {
+                    if (transaction.getIdTransmitter() == getIdCurrentUser()) {
+                        transaction.setAmount(-transaction.getAmount());
+                    }
+                })
+                .collect(Collectors.toList());
+        return Pair.of(transactions, transactionPage.getTotalElements());
     }
 
     /**
@@ -83,7 +98,7 @@ public class TransactionServiceImpl implements TransactionService {
         double maximumAuthorizedAmount = balanceCurrentUser / CommissionRate.RATE_CALCULATION_MAXIMUM_AUTHORIZED;
         if (balanceCurrentUserUpdated < 0) {
             logger.error("Unable to make the transaction because the balance is insufficient");
-            throw new TransactionException("Balance not sufficient to make the transaction, maximum authorized amount : " + Math.round(maximumAuthorizedAmount*100.0)/100.0);
+            throw new TransactionException("Balance not sufficient to make the transaction, maximum authorized amount : " + Math.round(maximumAuthorizedAmount * 100.0) / 100.0);
         }
         Connection connection = connectionRepository.findByIdUserAndEmailOfUserLinked(getIdCurrentUser(), transactionDto.getEmailBeneficiary());
         long currentDate = System.currentTimeMillis();

@@ -13,6 +13,7 @@ public interface TransactionRepository extends CrudRepository<Transaction, Integ
      * Find a list with all transactions by transmitter user and beneficiary user
      * @param idTransmitter id of the transmitting user of the transaction
      * @param idBeneficiary id of the beneficiary user of the transaction
+     * @param pageable result
      * @return a list with all transactions by transmitter user and beneficiary user
      */
     Page<Transaction> findByIdTransmitterOrIdBeneficiaryOrderByDateDesc(int idTransmitter, int idBeneficiary, Pageable pageable);

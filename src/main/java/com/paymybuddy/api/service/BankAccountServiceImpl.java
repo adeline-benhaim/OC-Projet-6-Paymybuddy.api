@@ -20,7 +20,7 @@ public class BankAccountServiceImpl implements BankAccountService {
     private static final Logger logger = LoggerFactory.getLogger(BankAccountServiceImpl.class);
 
     @Autowired
-    BankAccountRepository bankAccountRepository;
+    private BankAccountRepository bankAccountRepository;
 
     /**
      * Create a new bank account belonging to current user

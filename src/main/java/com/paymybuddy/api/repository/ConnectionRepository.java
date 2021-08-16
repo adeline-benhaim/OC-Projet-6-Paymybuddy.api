@@ -21,6 +21,14 @@ public interface ConnectionRepository extends CrudRepository<Connection, Integer
     List<Connection> findByIdUserOrderByConnectionIdDesc(int idUser, Pageable pageable);
 
     /**
+     * Find a list of connections by id user
+     *
+     * @param idUser of connections sought
+     * @return a list of connections belong to user with id informed
+     */
+    List<Connection> findByIdUserOrderByConnectionIdDesc(int idUser);
+
+    /**
      * Find a connection by id user and email user connected
      * @param idUser id user of current user
      * @param emailOfUserLinked email of user linked to the connection

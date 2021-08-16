@@ -22,7 +22,7 @@ import java.util.List;
 public class ConnectionController {
 
     @Autowired
-    ConnectionService connectionService;
+    private ConnectionService connectionService;
 
     int page = 0;
     int size = 4;
@@ -69,10 +69,5 @@ public class ConnectionController {
         model.addAttribute("connection", connection);
         return "connection";
     }
-
-//    @DeleteMapping("/connection/{email}")
-//    public void deleteConnectionByEmailOfUserLinked(@PathVariable("email") String email) {
-//        connectionService.deleteConnection(email);
-//    }
 
 }

@@ -147,6 +147,7 @@
                 <li th:if="${previousPageUrl}"><a th:text="${intPreviousPage}+1" th:href="${previousPageUrl}"></a></li>
                 <li><a th:text="${intActualPage}+1" th:href="${actualPageUrl}"></a></li>
                 <li th:if="${nextPageUrl}"><a th:text="${intNextPage}+1" th:href="${nextPageUrl}"></a></li>
+
                 <li th:if="${nextPageUrl}">
                     <a th:href="${nextPageUrl}" aria-label="Next">
                         <span aria-hidden="true">&raquo;</span>

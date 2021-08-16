@@ -2,8 +2,6 @@ package com.paymybuddy.api.service;
 
 import com.paymybuddy.api.model.User;
 import com.paymybuddy.api.repository.UserRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,7 +19,6 @@ import java.util.Collections;
 
 @Service("userDetailsService")
 public class CustomUserDetailsService implements UserDetailsService {
-    private static final Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
 
     @Autowired
     private UserRepository userRepository;

@@ -20,10 +20,10 @@ public class TransferServiceImpl implements TransferService {
     private static final Logger logger = LoggerFactory.getLogger(TransferServiceImpl.class);
 
     @Autowired
-    TransferRepository transferRepository;
+    private TransferRepository transferRepository;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     /**
      * Get the list of transfers for the current user

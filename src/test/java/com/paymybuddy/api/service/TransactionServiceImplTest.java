@@ -60,7 +60,7 @@ class TransactionServiceImplTest {
 
     @Test
     @DisplayName("Get a list of all transactions belonging to the current user")
-    void getAllTransactionsTest() throws Exception{
+    void getAllTransactionsTest() {
 
         //GIVEN
         int idCurrentUser = 1;
@@ -69,7 +69,7 @@ class TransactionServiceImplTest {
         //WHEN
         try {
             transactionService.getAllTransactions(pageable);
-        }catch (NullPointerException e ){ }
+        }catch (NullPointerException ignored){ }
 
         //THEN
         Mockito.verify(transactionRepository, Mockito.times(1)).findByIdTransmitterOrIdBeneficiaryOrderByDateDesc(idCurrentUser, idCurrentUser, pageable);

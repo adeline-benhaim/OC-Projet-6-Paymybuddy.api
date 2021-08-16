@@ -17,14 +17,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 
-import static com.paymybuddy.api.service.SecurityUtils.getIdCurrentUser;
 import static com.paymybuddy.api.service.SecurityUtils.isUserConnected;
 
 @Controller
@@ -110,7 +108,6 @@ public class UserController {
         if (!result.hasErrors()) {
             try {
                 userService.createUser(user);
-//                customUserDetailsService.authWithHttpServletRequest(request, user.getEmail(), user.getPassword());
                 return "home";
             } catch (UserAlreadyExistException e) {
                 ObjectError errorEmail = new ObjectError("email", e.getMessage());

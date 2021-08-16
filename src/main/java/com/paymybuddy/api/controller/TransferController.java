@@ -26,11 +26,11 @@ import java.util.Optional;
 public class TransferController {
 
     @Autowired
-    TransferService transferService;
+    private TransferService transferService;
     @Autowired
-    UserService userService;
+    private UserService userService;
     @Autowired
-    BankAccountService bankAccountService;
+    private BankAccountService bankAccountService;
 
     @GetMapping("/transfer")
     public String transfer(Model model) {

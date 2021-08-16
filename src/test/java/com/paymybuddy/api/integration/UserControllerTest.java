@@ -13,8 +13,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
 @AutoConfigureMockMvc
+@SpringBootTest
 public class UserControllerTest {
 
     @Autowired
@@ -65,13 +65,24 @@ public class UserControllerTest {
     @Test
     @WithMockUser(username = "1", password = "12345678", roles = "USER")
     @DisplayName("GET request (/home) must return home page with user logged")
-    public void getHomeTest() throws Exception {
+    public void getHomeUserTest() throws Exception {
 
         mockMvc.perform(get("/home"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(view().name("home"))
                 .andExpect(content().string(containsString("Paul")));
+    }
+
+    @Test
+    @WithMockUser(username = "4", password = "12345678", roles = "ADMIN")
+    @DisplayName("GET request (/home) must return home page with admin logged")
+    public void getHomeAdminTest() throws Exception {
+
+        mockMvc.perform(get("/home"))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/homeAdmin"));
     }
 
     @Test
@@ -142,7 +153,6 @@ public class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "1", password = "12345678", roles = "USER")
     @DisplayName("GET request (/createUser)")
     public void getUserCreatedTest() throws Exception {
 
@@ -151,4 +161,84 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("formNewUser"));
     }
+
+//    @Test
+//    @DisplayName("POST request (/createUser) must save new user account")
+//    public void postNewUserTest() throws Exception {
+//
+//        User user = User.builder()
+//                .firstName("newFirstName")
+//                .lastName("newLastName")
+//                .address("newAddress")
+//                .city("newCity")
+//                .email("newEmail")
+//                .password("newPassword")
+//                .phone("newPhone")
+//                .build();
+//
+//        mockMvc.perform(post("/createUser")
+//                .param("firstName", user.getFirstName())
+//                .param("lastName", user.getLastName())
+//                .param("address", user.getAddress())
+//                .param("city", user.getCity())
+//                .param("email", user.getEmail())
+//                .param("password", user.getPassword())
+//                .param("phone", user.getPhone()))
+//                .andDo(print())
+//                .andExpect(view().name("home"))
+//                .andExpect(status().isOk())
+//                .andReturn().getResponse().containsHeader("newFirstName");
+//    }
+//
+//    @Test
+//    @DisplayName("POST request (/createUser) with email already exist return form new user")
+//    public void postNewUserWithEmailAlreadyExistTest() throws Exception {
+//
+//        User user = User.builder()
+//                .firstName("newFirstName")
+//                .lastName("newLastName")
+//                .address("newAddress")
+//                .city("newCity")
+//                .email("email1@test.com")
+//                .password("newPassword")
+//                .phone("newPhone")
+//                .build();
+//
+//        mockMvc.perform(post("/createUser")
+//                .param("firstName", user.getFirstName())
+//                .param("lastName", user.getLastName())
+//                .param("address", user.getAddress())
+//                .param("city", user.getCity())
+//                .param("email", user.getEmail())
+//                .param("password", user.getPassword())
+//                .param("phone", user.getPhone()))
+//                .andDo(print())
+//                .andExpect(view().name("formNewUser"))
+//                .andExpect(status().isOk());
+//    }
+//
+//    @Test
+//    @WithMockUser(username = "2", password = "12345678", roles = "USER")
+//    @DisplayName("POST request (/updateUser) must update user account")
+//    public void postUpdateUserTest() throws Exception {
+//
+//        User user = User.builder()
+//                .firstName("newFirstName")
+//                .lastName("newLastName")
+//                .address("newAddress")
+//                .city("newCity")
+//                .phone("newPhone")
+//                .build();
+//
+//        mockMvc.perform(post("/updateUser")
+//                .param("firstName", user.getFirstName())
+//                .param("lastName", user.getLastName())
+//                .param("address", user.getAddress())
+//                .param("city", user.getCity())
+//                .param("phone", user.getPhone()))
+//                .andDo(print())
+//                .andExpect(view().name("redirect:/profile"))
+//                .andExpect(status().is3xxRedirection())
+//                .andReturn().getResponse().containsHeader("newFirstName");
+//    }
 }

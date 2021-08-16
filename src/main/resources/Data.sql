@@ -78,14 +78,6 @@ CREATE TABLE commission (
                 PRIMARY KEY (commission_id)
 );
 
-CREATE TABLE persistent_logins (
-username varchar(64) NOT null,
-series varchar(64) primary key,
-token varchar(64) not null,
-last_used timestamp not null)
-;
-
-
 ALTER TABLE bank_account ADD CONSTRAINT user_bank_account_fk
 FOREIGN KEY (id_user)
 REFERENCES user (user_id)
@@ -179,9 +171,9 @@ VALUES
 INSERT INTO commission
 (id_transaction, amount, date)
 VALUES
-('1', '2.5', '2021-01-01'),
-('1', '1', '2021-08-08'),
-('1', '3.75', '2021-07-01'),
+('5', '1', '2021-08-08'),
+('4', '3.75', '2021-07-01'),
+('3', '0.75', '2021-01-01'),
 ('2', '1.25', '2021-01-01'),
-('3', '0.75', '2021-01-01')
+('1', '2.5', '2021-01-01')
 ;
