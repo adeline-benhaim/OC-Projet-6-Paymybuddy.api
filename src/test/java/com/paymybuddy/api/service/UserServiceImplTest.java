@@ -88,27 +88,6 @@ class UserServiceImplTest {
         Mockito.verify(userRepository, Mockito.times(1)).save(user);
     }
 
-//    @Test
-//    @DisplayName("Update user information")
-//    void updateUserTest() {
-//
-//        //GIVEN
-//        Authentication authentication = Mockito.mock(Authentication.class);
-//        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-//        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
-//        SecurityContextHolder.setContext(securityContext);
-//        Mockito.when(authentication.getName()).thenReturn(String.valueOf("1"));
-//        Mockito.when(userRepository.findByUserId(1)).thenReturn(dataSourceTest.getUserListMocked().get(0));
-//        User user = dataSourceTest.getUserListMocked().get(0);
-////        User userToUpdate = User.builder().userId(1).firstName("new").build();
-//
-//        //WHEN
-//        userService.updateUser(user);
-//
-//        //THEN
-//        Mockito.verify(userRepository, Mockito.times(1)).save(any());
-//    }
-
     @Test
     @DisplayName("Update user password with correct current password")
     void updateUserPasswordTest() {

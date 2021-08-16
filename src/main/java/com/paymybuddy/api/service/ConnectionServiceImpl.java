@@ -23,10 +23,10 @@ public class ConnectionServiceImpl implements ConnectionService {
     private static final Logger logger = LoggerFactory.getLogger(ConnectionServiceImpl.class);
 
     @Autowired
-    ConnectionRepository connectionRepository;
+    private ConnectionRepository connectionRepository;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     /**
      * Check if current user connections contains user's email
@@ -80,6 +80,17 @@ public class ConnectionServiceImpl implements ConnectionService {
         logger.error("Unable to create connection because email already exist in connections of current user");
         throw new ConnectionAlreadyExistException("Unable to create this connection because email : " + connection.getEmailOfUserLinked() + " already exist in your connections");
 
+    }
+
+    /**
+     * Get a list of connections belong to current user
+     *
+     * @return a list of connections belong to current user with name and email of users connected
+     */
+    @Override
+    public List<Connection> getAllConnections() {
+        logger.info("Get a list of all connections");
+        return connectionRepository.findByIdUserOrderByConnectionIdDesc(getIdCurrentUser());
     }
 
     /**

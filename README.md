@@ -49,3 +49,7 @@ Move this folder out of the environment, using command prompt navigate to this f
 Here is the physical data model explaining the structure of the database tables.
 ![Alt text](https://i.postimg.cc/g03cwP0w/Mod-le-physique-de-donn-es.jpg "Physical data model")
 
+## UML class diagram
+
+Here the UML class diagram explaining the class structure of the model.
+![Alt text](https://i.postimg.cc/D07JVz9k/Diagramme-UML-de-domaine.jpg "UML class diagram")

@@ -20,6 +20,13 @@ public interface ConnectionService {
      *
      * @return a list of connections belong to current user with name and email of users connected
      */
+    List<Connection> getAllConnections();
+
+    /**
+     * Get a list of connections belong to current user
+     *
+     * @return a list of connections belong to current user with name and email of users connected
+     */
     List<Connection> getConnections(Pageable pageable);
 
     /**

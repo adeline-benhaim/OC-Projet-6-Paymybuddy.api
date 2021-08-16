@@ -3,19 +3,27 @@ package com.paymybuddy.api.service;
 import com.paymybuddy.api.model.Transaction;
 import com.paymybuddy.api.model.dto.TransactionDto;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 
 import java.util.List;
 
 public interface TransactionService {
 
-    long getTotalElementPageable(Pageable pageable);
-
     /**
      * Get a list of transactions issued and received belong to current user
      *
+     * @param pageable the result list
      * @return a list of transactions issued and received belong to current user
      */
     List<Transaction> getAllTransactions(Pageable pageable);
+
+    /**
+     * Get a pair with a list of transactions and a long number
+     *
+     * @param pageable the result list
+     * @return a pair with a list of transactions issued and received belong to current user and the total of elements of this list
+     */
+    Pair<List<Transaction>, Long> getTransactions(Pageable pageable);
 
     /**
      * Create a new transaction between the current user and a user connected
