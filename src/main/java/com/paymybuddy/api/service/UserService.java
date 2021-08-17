@@ -4,8 +4,6 @@ import com.paymybuddy.api.model.User;
 import com.paymybuddy.api.model.dto.PasswordDto;
 import com.paymybuddy.api.model.dto.UserDto;
 
-import java.util.Optional;
-
 public interface UserService {
 
     /**

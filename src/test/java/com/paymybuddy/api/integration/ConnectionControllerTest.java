@@ -32,17 +32,7 @@ public class ConnectionControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(view().name("connection"))
-                .andExpect(content().string(containsString("email2@test.com")));
-    }
-
-    @Test
-    @DisplayName("GET request (/createConnection)")
-    public void getConnectionCreatedTest() throws Exception {
-
-        mockMvc.perform(get("/createConnection"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(view().name("connection"));
+                .andExpect(model().attributeExists("connections"));
     }
 
     @Test

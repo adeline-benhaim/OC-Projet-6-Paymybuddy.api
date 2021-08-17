@@ -8,10 +8,11 @@ import com.paymybuddy.api.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static com.paymybuddy.api.service.SecurityUtils.getIdCurrentUser;
 
@@ -26,14 +27,16 @@ public class TransferServiceImpl implements TransferService {
     private UserRepository userRepository;
 
     /**
-     * Get the list of transfers for the current user
+     * Get a pair with a list of transfer and a long number
      *
-     * @return the list of transfers for the current user
+     * @param pageable the result list
+     * @return a pair with a list of transfer belong to current user and the total of elements of this list
      */
     @Override
-    public List<Transfer> getTransfers() {
+    public Pair<Page<Transfer>, Long> getTransfers(Pageable pageable) {
         logger.info("Get a list of transfers");
-        return transferRepository.findByIdUser(getIdCurrentUser());
+       Page<Transfer> transferPage = transferRepository.findByIdUser(getIdCurrentUser(), pageable);
+       return Pair.of(transferPage, transferPage.getTotalElements());
     }
 
     /**
@@ -50,18 +53,18 @@ public class TransferServiceImpl implements TransferService {
         double balanceCurrentUser = currentUser.getBalance();
         double balanceCurrentUserUpdated = 0;
         switch (transfer.getTransferType()) {
-            case DEBIT:
+            case DEBIT -> {
                 balanceCurrentUserUpdated = (balanceCurrentUser - transfer.getAmount());
                 logger.info("New debit created : -" + transfer.getAmount());
                 if (balanceCurrentUserUpdated < 0) {
                     logger.error("Unable to make the debit because the balance is insufficient ");
                     throw new TransferException("Balance not sufficient to make the transfer, maximum amount authorized : " + balanceCurrentUser);
                 }
-                break;
-            case CREDIT:
+            }
+            case CREDIT -> {
                 balanceCurrentUserUpdated = (balanceCurrentUser + transfer.getAmount());
                 logger.info("New credit created : +" + transfer.getAmount());
-                break;
+            }
         }
         long currentDate = System.currentTimeMillis();
         Transfer newTransfer = Transfer.builder()

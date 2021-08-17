@@ -10,14 +10,6 @@ import java.util.List;
 public interface TransactionService {
 
     /**
-     * Get a list of transactions issued and received belong to current user
-     *
-     * @param pageable the result list
-     * @return a list of transactions issued and received belong to current user
-     */
-    List<Transaction> getAllTransactions(Pageable pageable);
-
-    /**
      * Get a pair with a list of transactions and a long number
      *
      * @param pageable the result list

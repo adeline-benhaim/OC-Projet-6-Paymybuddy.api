@@ -1,17 +1,19 @@
 package com.paymybuddy.api.service;
 
 import com.paymybuddy.api.model.Transfer;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 
 public interface TransferService {
 
     /**
-     * Get the list of transfers for the current user
+     * Get a pair with a list of transfer and a long number
      *
-     * @return the list of transfers for the current user
+     * @param pageable the result list
+     * @return a pair with a list of transfer belong to current user and the total of elements of this list
      */
-    List<Transfer> getTransfers();
+    Pair<Page<Transfer>, Long> getTransfers(Pageable pageable);
 
     /**
      * Create a new transfer between the current user and their bank account

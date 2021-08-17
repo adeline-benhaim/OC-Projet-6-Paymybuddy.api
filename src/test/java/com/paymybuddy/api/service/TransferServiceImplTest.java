@@ -13,8 +13,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -40,22 +38,6 @@ public class TransferServiceImplTest {
     }
 
     int idCurrentUser = 1;
-
-    @Test
-    @DisplayName("Get the list of transfers for the current user")
-    void getTransfersTest() {
-
-        //GIVEN
-        when(transferRepository.findByIdUser(idCurrentUser)).thenReturn(dataSourceTest.getTransferListMocked());
-
-        //WHEN
-        List<Transfer> transferList = transferService.getTransfers();
-
-        //THEN
-        assertEquals(2, transferList.size());
-        assertEquals(Transfer.TransferType.DEBIT, transferList.get(0).getTransferType());
-
-    }
 
     @Test
     @DisplayName("Create a new transfer debit between the current user and their bank account")

@@ -10,7 +10,9 @@ import com.paymybuddy.api.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -94,14 +96,16 @@ public class ConnectionServiceImpl implements ConnectionService {
     }
 
     /**
-     * Get a list of connections belonging to current user
+     * Get a pair with a list of connections and a long number
      *
-     * @return a list of connections belonging to current user with name and email of users linked
+     * @param pageable the result list
+     * @return a pair with a list of connections belong to current user with name and email of users connected and the total of elements of this list
      */
     @Override
-    public List<Connection> getConnections(Pageable pageable) {
+    public Pair<Page<Connection>, Long> getConnections(Pageable pageable) {
         logger.info("Get a list of connections");
-        return connectionRepository.findByIdUserOrderByConnectionIdDesc(getIdCurrentUser(), pageable);
+        Page<Connection> connectionPage = connectionRepository.findByIdUserOrderByConnectionIdDesc(getIdCurrentUser(), pageable);
+        return Pair.of(connectionPage, connectionPage.getTotalElements());
     }
 
     /**

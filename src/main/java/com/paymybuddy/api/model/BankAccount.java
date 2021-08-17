@@ -2,7 +2,6 @@ package com.paymybuddy.api.model;
 
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.util.List;
