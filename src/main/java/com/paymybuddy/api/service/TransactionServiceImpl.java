@@ -39,24 +39,6 @@ public class TransactionServiceImpl implements TransactionService {
     private CommissionRepository commissionRepository;
 
     /**
-     * Get a list of transactions issued and received belong to current user
-     *
-     * @return a list of transactions issued and received belong to current user
-     */
-    @Override
-    public List<Transaction> getAllTransactions(Pageable pageable) {
-        logger.info("Get a list of all transactions");
-        return transactionRepository.findByIdTransmitterOrIdBeneficiaryOrderByDateDesc(getIdCurrentUser(), getIdCurrentUser(), pageable)
-                .stream()
-                .peek(transaction -> {
-                    if (transaction.getIdTransmitter() == getIdCurrentUser()) {
-                        transaction.setAmount(-transaction.getAmount());
-                    }
-                })
-                .collect(Collectors.toList());
-    }
-
-    /**
      * Get a pair with a list of transactions and a long number
      *
      * @param pageable the result list

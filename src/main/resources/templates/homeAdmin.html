@@ -58,12 +58,9 @@
     </div>
     <div class="home col-md-4 col-lg-4">
         <div>
-            <div class="progress">
-                <div class="progress-bar progress-bar-striped active bg-warning" role="progressbar"
-                     aria-valuenow="${amountDay}" aria-valuemin="0" aria-valuemax="100" style="width:2%"><span th:text="${amountDay}+' €'"></span>
-                </div>
-            </div>
             <h3>Daily commissions</h3>
+            <span class="text-danger"><h3 th:text="${amountDay}+' €'"></h3></span>
+            <hr>
             <a href="/dailyCommissions">
                 <button type="submit" class="btn btn-primary">See the daily report</button>
             </a>
@@ -71,12 +68,9 @@
     </div>
     <div class="home col-md-4 col-lg-4">
         <div>
-            <div class="progress bg-success">
-                <div class="progress-bar progress-bar-striped active" role="progressbar"
-                     aria-valuenow="${amountMonth}" aria-valuemin="0" aria-valuemax="100" style="width:30%"><span th:text="${amountMonth}+' €'"></span>
-                </div>
-            </div>
             <h3>Monthly commissions</h3>
+            <span class="text-danger"><h3 th:text="${amountMonth}+' €'"></h3></span>
+            <hr>
             <a href="/monthlyCommissions">
                 <button type="submit" class="btn btn-primary">See the monthly report</button>
             </a>
@@ -84,12 +78,9 @@
     </div>
     <div class="home col-md-4 col-lg-4">
         <div>
-            <div class="progress">
-                <div class="progress-bar progress-bar-striped active" role="progressbar"
-                     aria-valuenow="${amountYear}" aria-valuemin="0" aria-valuemax="100" style="width:10%"><span th:text="${amountYear}+' €'"></span>
-                </div>
-            </div>
             <h3>Year commissions</h3>
+            <span class="text-danger"><h3 th:text="${amountYear}+' €'"></h3></span>
+            <hr>
             <a href="/yearCommissions">
                 <button type="submit" class="btn btn-primary">See the annual report</button>
             </a>

@@ -1,8 +1,8 @@
 package com.paymybuddy.api.repository;
 
 import com.paymybuddy.api.model.Connection;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +16,10 @@ public interface ConnectionRepository extends CrudRepository<Connection, Integer
      * Find a list of connections by id user
      *
      * @param idUser of connections sought
+     * @param pageable result
      * @return a list of connections belong to user with id informed
      */
-    List<Connection> findByIdUserOrderByConnectionIdDesc(int idUser, Pageable pageable);
+    Page<Connection> findByIdUserOrderByConnectionIdDesc(int idUser, Pageable pageable);
 
     /**
      * Find a list of connections by id user

@@ -7,7 +7,6 @@ import com.paymybuddy.api.model.dto.TransactionDto;
 import com.paymybuddy.api.service.ConnectionService;
 import com.paymybuddy.api.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
 import org.springframework.data.web.PageableDefault;
@@ -30,40 +29,16 @@ public class TransactionController {
     @Autowired
     private ConnectionService connectionService;
 
-    int page = 0;
-    int size = 4;
-
     @GetMapping("/transactions")
     public String transaction(Model model, @PageableDefault(size = 2) Pageable pageable) {
-//        List<Transaction> transactionList = transactionService.getAllTransactions(pageable);
+        String baseUri = "/transactions?page=";
         Pair<List<Transaction>, Long> transactionsPair = transactionService.getTransactions(pageable);
         model.addAttribute("transactions", transactionsPair.getFirst());
-        paginationBuilder(model, pageable, transactionsPair.getSecond());
+        PaginationUtils.paginationBuilder(model, pageable, transactionsPair.getSecond(), baseUri);
         List<Connection> connections = connectionService.getAllConnections();
         model.addAttribute("connections", connections);
         model.addAttribute("transactionDto", new TransactionDto());
         return "transaction";
-    }
-
-    private void paginationBuilder(Model model, Pageable pageable, long totalElements) {
-        int actualPageNumber = pageable.getPageNumber();
-        model.addAttribute("intActualPage", actualPageNumber);
-        String actualPageUrl = "/transactions?page=" + actualPageNumber;
-        model.addAttribute("actualPageUrl", actualPageUrl);
-
-        if (pageable.getPageNumber() >= 1) {
-            int previousPage = pageable.getPageNumber() - 1;
-            String previousPageUrl = "/transactions?page=" + previousPage;
-            model.addAttribute("previousPageUrl", previousPageUrl);
-            model.addAttribute("intPreviousPage", previousPage);
-        }
-        if (totalElements > (long) (pageable.getPageNumber() + 1) * pageable.getPageSize()) {
-            int nextPage = pageable.getPageNumber() + 1;
-            model.addAttribute("intNextPage", nextPage);
-            String nextPageUrl = "/transactions?page=" + nextPage;
-            model.addAttribute("nextPageUrl", nextPageUrl);
-
-        }
     }
 
     @PostMapping("/createTransaction")
@@ -78,8 +53,8 @@ public class TransactionController {
                 result.addError(objectError);
             }
         }
-        List<Transaction> transactionList = transactionService.getAllTransactions(PageRequest.of(page, size));
-        model.addAttribute("transactions", transactionList);
+        Pair<List<Transaction>, Long> transactionsPair = transactionService.getTransactions(pageable);
+        model.addAttribute("transactions", transactionsPair.getFirst());
         List<Connection> connections = connectionService.getAllConnections();
         model.addAttribute("connections", connections);
         model.addAttribute("transactionDto", transactionDto);

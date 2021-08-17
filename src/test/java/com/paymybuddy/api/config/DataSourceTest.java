@@ -1,8 +1,9 @@
 package com.paymybuddy.api.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.paymybuddy.api.model.*;
-import com.paymybuddy.api.model.dto.UserDto;
+import com.paymybuddy.api.model.BankAccount;
+import com.paymybuddy.api.model.Connection;
+import com.paymybuddy.api.model.Transfer;
+import com.paymybuddy.api.model.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;

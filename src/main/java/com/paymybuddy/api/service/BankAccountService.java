@@ -4,7 +4,6 @@ import com.paymybuddy.api.model.BankAccount;
 import com.paymybuddy.api.model.dto.BankAccountDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BankAccountService {
 

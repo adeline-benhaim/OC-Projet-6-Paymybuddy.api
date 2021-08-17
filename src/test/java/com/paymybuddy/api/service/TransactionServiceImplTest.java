@@ -18,8 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -56,23 +54,6 @@ class TransactionServiceImplTest {
         Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
         Mockito.when(authentication.getName()).thenReturn("1");
-    }
-
-    @Test
-    @DisplayName("Get a list of all transactions belonging to the current user")
-    void getAllTransactionsTest() {
-
-        //GIVEN
-        int idCurrentUser = 1;
-        Pageable pageable = PageRequest.of(0, 4);
-
-        //WHEN
-        try {
-            transactionService.getAllTransactions(pageable);
-        }catch (NullPointerException ignored){ }
-
-        //THEN
-        Mockito.verify(transactionRepository, Mockito.times(1)).findByIdTransmitterOrIdBeneficiaryOrderByDateDesc(idCurrentUser, idCurrentUser, pageable);
     }
 
     @Test
@@ -121,7 +102,7 @@ class TransactionServiceImplTest {
         double balanceCurrentUserBeforeTransaction = dataSourceTest.getUserListMocked().get(0).getBalance();
         double balanceUserBeneficiaryBeforeTransaction = dataSourceTest.getUserListMocked().get(1).getBalance();
         double commission = transactionDto.getAmount() * CommissionRate.COMMISSION_RATE;
-        double maximumAuthorizedAmount =  balanceCurrentUserBeforeTransaction / CommissionRate.RATE_CALCULATION_MAXIMUM_AUTHORIZED;
+        double maximumAuthorizedAmount = balanceCurrentUserBeforeTransaction / CommissionRate.RATE_CALCULATION_MAXIMUM_AUTHORIZED;
 
         //WHEN
         transactionService.createTransaction(transactionDto);
@@ -134,7 +115,7 @@ class TransactionServiceImplTest {
         assertEquals(balanceCurrentUserBeforeTransaction - 10.5, balanceCurrentUserAfterTransaction);
         assertEquals(balanceUserBeneficiaryBeforeTransaction + 10, balanceUserBeneficiaryAfterTransaction);
         assertEquals(0.5, commission);
-        assertEquals(95.24, Math.round(maximumAuthorizedAmount*100.0)/100.0);
+        assertEquals(95.24, Math.round(maximumAuthorizedAmount * 100.0) / 100.0);
     }
 
 }
